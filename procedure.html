@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#060d18">
+<title>操作规程 · CAD 上机标准作业流程</title>
+<meta name="description" content="CAD 机房上机标准作业流程（SOP）：签到、开机、登录、建立作业目录、启动 AutoCAD、绘图、出图、提交与关机，逐步动画模拟。">
+<link rel="stylesheet" href="assets/css/theme.css">
+<style>
+  .sop{display:grid;grid-template-columns:1fr 1fr;gap:26px;align-items:start}
+  .screen{
+    position:sticky;top:calc(var(--nav-h) + 20px);
+    border:1px solid var(--line-2);border-radius:16px;overflow:hidden;background:#06101c;
+    box-shadow:var(--shadow);
+  }
+  .screen-bar{
+    display:flex;align-items:center;gap:8px;padding:9px 13px;background:rgba(16,30,48,.9);
+    border-bottom:1px solid var(--line);font-size:11.5px;color:var(--sub);
+  }
+  .screen-bar .leds{display:flex;gap:5px}
+  .screen-bar .leds i{width:8px;height:8px;border-radius:50%;background:#33475c;display:block}
+  .screen-bar .leds i.g{background:var(--green)}
+  .screen-bar .leds i.a{background:var(--amber)}
+  .screen-bar .leds i.r{background:var(--red)}
+  .screen-body{
+    aspect-ratio:16/10;position:relative;overflow:hidden;
+    background:radial-gradient(circle at 50% 30%,#0d2436,#050d18 78%);
+    display:grid;place-items:center;padding:18px;
+  }
+  .scr{width:100%;height:100%;display:flex;flex-direction:column;justify-content:center;gap:10px;animation:fadeIn .45s ease}
+  @keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+  .scr h5{font-size:13px;font-weight:700;letter-spacing:.4px;color:#dff2ff}
+  .scr p{font-size:11.5px;color:var(--sub);line-height:1.8}
+  .scr .line{height:1px;background:var(--line);margin:4px 0}
+  .mono-sm{font-family:var(--mono);font-size:11.5px;color:var(--cyan)}
+  .win{
+    border:1px solid var(--line-2);border-radius:9px;overflow:hidden;background:rgba(10,22,36,.9);
+  }
+  .win-h{display:flex;align-items:center;gap:7px;padding:6px 10px;background:rgba(30,52,74,.7);font-size:11px;color:var(--sub)}
+  .win-b{padding:11px 12px}
+  .rowlist{display:flex;flex-direction:column;gap:6px}
+  .rowlist div{display:flex;justify-content:space-between;font-size:11.5px;color:var(--sub);
+    border-bottom:1px dashed rgba(94,209,255,.12);padding-bottom:5px}
+  .rowlist div span:last-child{color:var(--txt);font-family:var(--mono);font-size:11px}
+  .pwr{display:flex;align-items:center;gap:12px}
+  .pwr .led{width:10px;height:10px;border-radius:50%;background:var(--green);box-shadow:0 0 12px var(--green);animation:pulse 1.6s infinite}
+  .bootbar{height:5px;border-radius:99px;background:rgba(94,209,255,.15);overflow:hidden;margin-top:8px}
+  .bootbar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--cyan),var(--violet));
+    animation:boot 2.4s cubic-bezier(.3,.9,.4,1) infinite}
+  @keyframes boot{0%{width:0}70%{width:100%}100%{width:100%;opacity:.4}}
+  .kbdline{display:flex;gap:5px;flex-wrap:wrap}
+  .kbdline kbd{
+    font-family:var(--mono);font-size:10.5px;border:1px solid var(--line-2);border-radius:5px;padding:2px 7px;
+    color:var(--cyan);background:rgba(34,211,238,.08)
+  }
+  .layer-tbl{width:100%;font-size:11px;border-collapse:collapse}
+  .layer-tbl td{padding:3px 4px;border-bottom:1px solid rgba(94,209,255,.1);color:var(--sub)}
+  .layer-tbl td:first-child{width:14px}
+  .layer-tbl .sw{width:10px;height:10px;border-radius:2px;display:block}
+  .ctrl{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap}
+  .prog{display:flex;align-items:center;gap:10px;margin-top:10px}
+  .prog .bar{flex:1}
+  .prog .t{font-family:var(--mono);font-size:12px;color:var(--cyan)}
+  .step{cursor:pointer;border-radius:10px;padding:8px 10px;transition:.2s}
+  .step:hover{background:rgba(34,211,238,.05)}
+  .step:not(.on):not(.done) .n{opacity:.7}
+  .chk{display:flex;align-items:center;gap:9px;font-size:12.5px;color:var(--sub);padding:6px 0;cursor:pointer}
+  .chk input{accent-color:#22d3ee;width:15px;height:15px}
+  .chk.done{color:var(--txt)}
+  @media(max-width:900px){.sop{grid-template-columns:1fr}.screen{position:static}}
+</style>
+</head>
+<body data-page="procedure">
+
+<header data-shell="nav"></header>
+
+<main>
+  <section class="section tight" style="padding-top:34px">
+    <div class="wrap">
+      <div class="sec-head">
+        <div>
+          <div class="eyebrow" style="margin-bottom:12px"><span class="dot"></span>标准作业流程 · 流程仿真</div>
+          <h2 class="h" id="sopTitle"></h2>
+        </div>
+        <div class="hint">点击任一步骤查看该步的设备状态</div>
+      </div>
+
+      <div class="hi info" style="margin-bottom:22px">
+        <span class="ic">◎</span>
+        <div id="sopIntro"></div>
+      </div>
+
+      <div class="sop">
+        <div>
+          <div class="steps" id="steps"></div>
+
+          <div class="card" style="margin-top:22px">
+            <div class="card-h"><span class="ico g">✓</span><h3>上机检查点自检</h3><span class="hint">勾选后自动计算完成度</span></div>
+            <div id="checklist"></div>
+            <div class="prog">
+              <div class="bar"><i id="chkBar" style="width:0%"></i></div>
+              <span class="t" id="chkText">0 / 5</span>
+            </div>
+            <div class="hi ok" id="chkDone" style="margin-top:14px;display:none">
+              <span class="ic">★</span><div>全部检查点通过，可以开始绘图了。规范的上机习惯，就是最省时间的捷径。</div>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <div class="screen">
+            <div class="screen-bar">
+              <span class="leds"><i class="g"></i><i class="a"></i><i class="r"></i></span>
+              <span id="screenTitle">模拟屏 · 待机</span>
+              <span style="margin-left:auto" class="mono-sm" id="screenStep">STEP 01</span>
+            </div>
+            <div class="screen-body"><div class="scr" id="screenBody"></div></div>
+          </div>
+
+          <div class="ctrl">
+            <button class="btn btn-primary btn-sm" id="btnAuto">▶ 自动播放流程</button>
+            <button class="btn btn-ghost btn-sm" id="btnPrev">← 上一步</button>
+            <button class="btn btn-ghost btn-sm" id="btnNext">下一步 →</button>
+            <button class="btn btn-ghost btn-sm" id="btnReset">复位</button>
+          </div>
+
+          <div class="card flat" style="margin-top:16px">
+            <div class="card-h" style="margin-bottom:12px"><span class="ico a">!</span><h3>常见错误</h3></div>
+            <ul class="dots" id="errs"></ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer data-shell="footer"></footer>
+
+<script src="assets/js/data.js"></script>
+<script src="assets/js/glyphs.js"></script>
+<script src="assets/js/ui.js"></script>
+<script>
+(function () {
+  var L = window.LAB, UI = window.UI;
+  UI.init('procedure');
+
+  var P = L.procedure;
+  document.getElementById('sopTitle').textContent = P.title;
+  document.getElementById('sopIntro').textContent = P.intro;
+
+  var stepsEl = document.getElementById('steps');
+  var screenBody = document.getElementById('screenBody');
+  var screenStep = document.getElementById('screenStep');
+  var screenTitle = document.getElementById('screenTitle');
+  var cur = 1, timer = null;
+
+  stepsEl.innerHTML = P.steps.map(function (s, i) {
+    return '<div class="step" data-i="' + (i + 1) + '">' +
+      '<div class="n">' + s.n + '</div>' +
+      '<div class="c"><h4>' + UI.esc(s.t) + '</h4><p>' + UI.esc(s.d) + '</p></div>' +
+    '</div>';
+  }).join('');
+
+  /* ---------------- 模拟屏内容 ---------------- */
+  var S = {};
+  S[1] = function () {
+    return '<h5>实验室签到 · A-305</h5>' +
+      '<div class="win"><div class="win-h">签到表 · 2026-10-17 第 3-4 节</div><div class="win-b"><div class="rowlist">' +
+      '<div><span>座号 07 · 张同学</span><span>08:02 已签</span></div>' +
+      '<div><span>座号 08 · 李同学</span><span>08:03 已签</span></div>' +
+      '<div><span>你 · 座号 <b style="color:#22d3ee">23</b></span><span style="color:#34d399">待签到</span></div>' +
+      '</div></div></div>' +
+      '<p>对号入座：座号 23 → 机位 SB-01-23，与学生机编号一致。</p>';
+  };
+  S[2] = function () {
+    return '<h5>防静电释放</h5>' +
+      '<div class="pwr"><span class="led"></span><span style="font-size:12px;color:#8ea6c6">触摸静电释放器 2 秒…</span></div>' +
+      '<div class="bootbar"><i style="animation-duration:2s"></i></div>' +
+      '<p>人体静电可达 <span class="mono-sm">1000V+</span>，经防静电地板（10⁶—10⁹Ω）泄放入地，保护主板与显卡。</p>' +
+      '<div class="hi warn" style="padding:9px 12px;font-size:11.5px"><span>!</span><div>不要穿脱化纤外套、不要用湿手触碰机箱。</div></div>';
+  };
+  S[3] = function () {
+    return '<h5>开机顺序：显示器 → 主机</h5>' +
+      '<div class="pwr"><span class="led"></span><span class="mono-sm">POWER LED · ON</span></div>' +
+      '<div class="bootbar"><i></i></div>' +
+      '<div class="win" style="margin-top:6px"><div class="win-h">正在加载教学镜像…</div><div class="win-b"><div class="rowlist">' +
+      '<div><span>系统还原卡</span><span>已挂载</span></div>' +
+      '<div><span>网络磁盘 D:\\</span><span>已映射</span></div>' +
+      '<div><span>Autodesk 许可</span><span>正常</span></div>' +
+      '</div></div></div>' +
+      '<p>听到风扇声后约 40 秒进入登录界面，不要反复按电源键。</p>';
+  };
+  S[4] = function () {
+    return '<h5>登录教学桌面</h5>' +
+      '<div class="win"><div class="win-h">Windows 11 · 教学镜像</div><div class="win-b"><div class="rowlist">' +
+      '<div><span>用户名</span><span>2023010234</span></div>' +
+      '<div><span>域</span><span>TEACHING</span></div>' +
+      '<div><span>状态</span><span style="color:#34d399">登录成功</span></div>' +
+      '</div></div></div>' +
+      '<p>使用<b>本人学号</b>登录，禁止借用账号；首次登录须修改初始密码。</p>';
+  };
+  S[5] = function () {
+    return '<h5>建立作业目录</h5>' +
+      '<div class="win"><div class="win-h">D:\\课程作业\\</div><div class="win-b"><div class="rowlist">' +
+      '<div><span>📁 机制2301-2023010234-张同学</span><span>新建</span></div>' +
+      '<div><span>　├ 01-支架平面图.dwg</span><span>—</span></div>' +
+      '<div><span>　└ 01-支架平面图.pdf</span><span>—</span></div>' +
+      '</div></div></div>' +
+      '<div class="hi bad" style="padding:9px 12px;font-size:11.5px"><span>✕</span><div>作业存在桌面或 C 盘，还原卡一还原就全没了。</div></div>';
+  };
+  S[6] = function () {
+    return '<h5>启动 AutoCAD（GB 模板）</h5>' +
+      '<div class="win"><div class="win-h">AutoCAD 2023 · 新建图形</div><div class="win-b"><div class="rowlist">' +
+      '<div><span>模板 acadiso.dwt</span><span>公制 mm</span></div>' +
+      '<div><span>图形界限</span><span>420 × 297 (A3)</span></div>' +
+      '<div><span>可选</span><span>acadiso.dwt / A4</span></div>' +
+      '</div></div></div>' +
+      '<p>从「GB 标准」模板起步，单位与线型即符合国标，省去大量设置时间。</p>';
+  };
+  S[7] = function () {
+    return '<h5>绘图环境设置</h5>' +
+      '<div class="kbdline"><kbd>UNITS</kbd><kbd>LIMITS</kbd><kbd>LAYER</kbd><kbd>LTSCALE</kbd></div>' +
+      '<div class="win" style="margin-top:6px"><div class="win-h">图层特性管理器</div><div class="win-b">' +
+      '<table class="layer-tbl">' +
+      '<tr><td><i class="sw" style="background:#fff"></i></td><td>粗实线</td><td>连续</td><td>0.50 mm</td></tr>' +
+      '<tr><td><i class="sw" style="background:#0ff"></i></td><td>细实线</td><td>连续</td><td>0.25 mm</td></tr>' +
+      '<tr><td><i class="sw" style="background:#f00"></i></td><td>中心线</td><td>CENTER</td><td>0.25 mm</td></tr>' +
+      '<tr><td><i class="sw" style="background:#ff0"></i></td><td>标注</td><td>连续</td><td>0.25 mm</td></tr>' +
+      '</table></div></div>' +
+      '<p>图层是 CAD 的纪律：颜色管打印、线型管表达、线宽管规范。</p>';
+  };
+  S[8] = function () {
+    return '<h5>绘图：栅格捕捉与对象捕捉</h5>' +
+      '<svg viewBox="0 0 300 150" style="width:100%;height:auto">' +
+      '<g stroke="rgba(94,209,255,.16)" stroke-width=".7">' +
+      '<path d="M20 20 H280 M20 50 H280 M20 80 H280 M20 110 H280 M20 140 H280"/>' +
+      '<path d="M40 10 V145 M80 10 V145 M120 10 V145 M160 10 V145 M200 10 V145 M240 10 V145"/>' +
+      '</g>' +
+      '<rect x="80" y="50" width="160" height="60" fill="none" stroke="#22d3ee" stroke-width="2" stroke-dasharray="460" stroke-dashoffset="460" style="animation:draw 2.6s ease-in-out infinite"/>' +
+      '<circle cx="100" cy="70" r="7" fill="none" stroke="#fbbf24" stroke-width="2"/>' +
+      '<circle cx="220" cy="70" r="7" fill="none" stroke="#fbbf24" stroke-width="2"/>' +
+      '<text x="150" y="138" font-size="10" fill="#8ea6c6" text-anchor="middle" font-family="sans-serif">RECTANG 120×80 · CIRCLE Ø10</text>' +
+      '<style>@keyframes draw{0%{stroke-dashoffset:460}60%{stroke-dashoffset:0}100%{stroke-dashoffset:0;opacity:.35}}</style>' +
+      '</svg>' +
+      '<p><b>F3 对象捕捉 · F8 正交 · F9 栅格捕捉</b>：让鼠标落在精确坐标上，而不是「看着差不多」。</p>';
+  };
+  S[9] = function () {
+    return '<h5>标注与出图</h5>' +
+      '<div class="kbdline"><kbd>DIM</kbd><kbd>PLOT</kbd><kbd>PREVIEW</kbd></div>' +
+      '<div class="win" style="margin-top:6px"><div class="win-h">打印 — 模型</div><div class="win-b"><div class="rowlist">' +
+      '<div><span>图纸尺寸</span><span>A4 (297×210)</span></div>' +
+      '<div><span>打印样式表</span><span>GB-线宽.ctb</span></div>' +
+      '<div><span>打印比例</span><span>1:1</span></div>' +
+      '<div><span>方向</span><span>横向</span></div>' +
+      '</div></div></div>' +
+      '<p>先「预览」再打印：图幅、比例、线宽三项核对无误，再送到 A0 绘图仪。</p>';
+  };
+  S[10] = function () {
+    return '<h5>提交与关机</h5>' +
+      '<div class="win"><div class="win-h">提交作业</div><div class="win-b"><div class="rowlist">' +
+      '<div><span>学号-支架平面图.dwg</span><span style="color:#34d399">已提交</span></div>' +
+      '<div><span>学号-支架平面图.pdf</span><span style="color:#34d399">已提交</span></div>' +
+      '</div></div></div>' +
+      '<div class="kbdline" style="margin-top:8px"><kbd>关机 → 等断电 → 关显示器</kbd></div>' +
+      '<p>椅子推入、台面清空、登记设备完好，最后离场。</p>';
+  };
+
+  function show(i) {
+    cur = Math.max(1, Math.min(P.steps.length, i));
+    Array.prototype.forEach.call(stepsEl.children, function (el) {
+      var n = parseInt(el.dataset.i, 10);
+      el.classList.toggle('on', n === cur);
+      el.classList.toggle('done', n < cur);
+    });
+    var s = P.steps[cur - 1];
+    screenTitle.textContent = '模拟屏 · ' + s.t;
+    screenStep.textContent = 'STEP ' + s.n;
+    screenBody.innerHTML = (S[cur] || S[1])();
+    screenBody.style.animation = 'none';
+    void screenBody.offsetWidth;
+    screenBody.style.animation = '';
+  }
+
+  stepsEl.addEventListener('click', function (e) {
+    var el = e.target.closest('.step');
+    if (el) { stopAuto(); show(parseInt(el.dataset.i, 10)); }
+  });
+
+  document.getElementById('btnNext').addEventListener('click', function () { stopAuto(); show(cur + 1); });
+  document.getElementById('btnPrev').addEventListener('click', function () { stopAuto(); show(cur - 1); });
+  document.getElementById('btnReset').addEventListener('click', function () { stopAuto(); show(1); });
+  document.getElementById('btnAuto').addEventListener('click', function () {
+    if (timer) { stopAuto(); return; }
+    this.textContent = '⏸ 暂停播放';
+    show(1);
+    timer = setInterval(function () {
+      if (cur >= P.steps.length) { stopAuto(); return; }
+      show(cur + 1);
+    }, 3200);
+  });
+  function stopAuto() {
+    if (timer) { clearInterval(timer); timer = null; }
+    var b = document.getElementById('btnAuto');
+    if (b) b.textContent = '▶ 自动播放流程';
+  }
+
+  /* 检查点自检 */
+  var chk = document.getElementById('checklist');
+  chk.innerHTML = P.checkpoints.map(function (c, i) {
+    return '<label class="chk" data-i="' + i + '"><input type="checkbox"><span>' + UI.esc(c) + '</span></label>';
+  }).join('');
+  chk.addEventListener('change', function () {
+    var boxes = chk.querySelectorAll('input');
+    var n = 0;
+    Array.prototype.forEach.call(boxes, function (b, i) {
+      b.parentElement.classList.toggle('done', b.checked);
+      if (b.checked) n++;
+    });
+    document.getElementById('chkBar').style.width = (n / boxes.length * 100) + '%';
+    document.getElementById('chkText').textContent = n + ' / ' + boxes.length;
+    document.getElementById('chkDone').style.display = (n === boxes.length) ? 'flex' : 'none';
+  });
+
+  /* 常见错误 */
+  document.getElementById('errs').innerHTML = [
+    '把作业存在桌面或 C 盘 → 还原卡重启后文件全部丢失',
+    '直接用默认模板（英制）→ 单位与线型全部报废',
+    '忘记开对象捕捉 → 端点捕捉不到，图形「看着对、量着错」',
+    '打印前不预览 → 图纸被裁切、比例不对、线宽过粗',
+    '关机直接按插排开关 → 硬盘损坏、数据丢失'
+  ].map(function (x) { return '<li>' + x + '</li>'; }).join('');
+
+  show(1);
+})();
+</script>
+</body>
+</html>

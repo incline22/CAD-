@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#060d18">
+<title>安全规范 · 计算机辅助设计实验室（A-305）</title>
+<meta name="description" content="实验室安全规范：用电安全、消防安全、防静电与设备保护、网络与信息安全、环境与行为规范，以及应急处置流程。">
+<link rel="stylesheet" href="assets/css/theme.css">
+<style>
+  .acc{border:1px solid var(--line);border-radius:var(--r);overflow:hidden;background:rgba(11,21,36,.68)}
+  .acc + .acc{margin-top:12px}
+  .acc-h{
+    display:flex;align-items:center;gap:12px;padding:15px 18px;cursor:pointer;transition:.2s;
+    background:linear-gradient(90deg,rgba(34,211,238,.06),transparent);
+  }
+  .acc-h:hover{background:rgba(34,211,238,.09)}
+  .acc-h .n{
+    width:34px;height:34px;border-radius:10px;display:grid;place-items:center;flex:0 0 auto;
+    background:rgba(34,211,238,.12);color:var(--cyan);font-size:15px;
+  }
+  .acc-h h3{font-size:14.5px;font-weight:700}
+  .acc-h .cnt{margin-left:auto;font-family:var(--mono);font-size:12px;color:var(--dim)}
+  .acc-h .arrow{color:var(--dim);transition:transform .25s;font-size:12px}
+  .acc.on .arrow{transform:rotate(90deg)}
+  .acc-b{display:none;padding:4px 18px 18px 64px;border-top:1px solid var(--line)}
+  .acc.on .acc-b{display:block;animation:fadeIn .3s ease}
+  @keyframes fadeIn{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}
+  .acc-b ol{margin:10px 0 0;padding-left:18px;display:flex;flex-direction:column;gap:9px}
+  .acc-b li{font-size:13px;color:var(--sub);line-height:1.9}
+  .acc-b li::marker{color:var(--cyan);font-family:var(--mono);font-size:12px}
+
+  .flow{display:grid;grid-template-columns:repeat(5,1fr);gap:0;position:relative;margin-top:8px}
+  .flow .f{position:relative;padding:0 10px}
+  .flow .f::before{
+    content:'';position:absolute;left:0;top:19px;width:100%;height:2px;
+    background:linear-gradient(90deg,var(--line-2),rgba(94,209,255,.05));
+  }
+  .flow .f:first-child::before{background:linear-gradient(90deg,transparent,var(--line-2))}
+  .flow .f .dot2{
+    position:relative;z-index:1;width:40px;height:40px;border-radius:12px;display:grid;place-items:center;
+    background:rgba(34,211,238,.1);border:1px solid var(--line-2);color:var(--cyan);font-weight:800;
+    font-family:var(--mono);font-size:13px;
+  }
+  .flow .f h4{font-size:13.5px;margin:10px 0 5px;font-weight:700}
+  .flow .f p{font-size:12px;color:var(--sub);line-height:1.8}
+  .ban{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+  .ban div{
+    display:flex;gap:10px;align-items:flex-start;font-size:12.5px;color:#fca5a5;
+    border:1px solid rgba(248,113,113,.24);background:rgba(248,113,113,.06);
+    border-radius:11px;padding:11px 13px;line-height:1.8;
+  }
+  .ban div b{color:#fff}
+  .ban .i{flex:0 0 auto;font-size:13px}
+  @media(max-width:900px){
+    .flow{grid-template-columns:1fr;gap:16px}
+    .flow .f::before{display:none}
+    .ban{grid-template-columns:1fr}
+    .acc-b{padding-left:18px}
+  }
+</style>
+</head>
+<body data-page="safety">
+
+<header data-shell="nav"></header>
+
+<main>
+  <section class="section tight" style="padding-top:34px">
+    <div class="wrap">
+      <div class="sec-head">
+        <div>
+          <div class="eyebrow" style="margin-bottom:12px"><span class="dot"></span>实验室安全规范</div>
+          <h2 class="h">先安全，再绘图</h2>
+        </div>
+        <div class="hint">依据 GB 50174《计算机机房设计规范》与学院实验室管理制度</div>
+      </div>
+
+      <div class="hi warn" style="margin-bottom:22px">
+        <span class="ic">!</span>
+        <div><b>进入实验室前请务必阅读。</b><span id="safetyIntro"></span></div>
+      </div>
+
+      <div class="grid g2" style="align-items:start">
+        <div>
+          <div id="accs"></div>
+        </div>
+
+        <div>
+          <div class="card">
+            <div class="card-h"><span class="ico a">⚡</span><h3>应急处置流程</h3><span class="hint">发现险情 → 五步走</span></div>
+            <div class="flow" id="flow"></div>
+          </div>
+
+          <div class="card" style="margin-top:16px">
+            <div class="card-h"><span class="ico g">✚</span><h3>二氧化碳灭火器操作四步</h3><span class="hint">电气火灾首选</span></div>
+            <div class="grid g2" style="gap:10px" id="extSteps"></div>
+            <div class="hi bad" style="margin-top:14px">
+              <span class="ic">!</span>
+              <div>禁止手握喇叭筒金属部位（会冻伤）；密闭空间使用后<b>立即通风</b>并撤离，防止缺氧窒息。</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top:18px">
+        <div class="card-h"><span class="ico">✕</span><h3>严禁行为清单</h3><span class="hint">发现即终止实验并上报</span></div>
+        <div class="ban" id="ban"></div>
+      </div>
+
+      <div class="card" style="margin-top:18px">
+        <div class="card-h"><span class="ico">◈</span><h3>设备安全责任</h3></div>
+        <div class="grid g3" id="duty"></div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer data-shell="footer"></footer>
+
+<script src="assets/js/data.js"></script>
+<script src="assets/js/glyphs.js"></script>
+<script src="assets/js/ui.js"></script>
+<script>
+(function () {
+  var L = window.LAB, UI = window.UI;
+  UI.init('safety');
+  var S = L.safety;
+
+  document.getElementById('safetyIntro').textContent = S.intro;
+
+  /* 规范条目 */
+  document.getElementById('accs').innerHTML = S.groups.map(function (g, i) {
+    return '<div class="acc' + (i === 0 ? ' on' : '') + '">' +
+      '<div class="acc-h"><span class="n">' + g.icon + '</span><h3>' + UI.esc(g.name) + '</h3>' +
+        '<span class="cnt">' + g.rules.length + ' 条</span><span class="arrow">▶</span></div>' +
+      '<div class="acc-b"><ol>' + g.rules.map(function (r) { return '<li>' + UI.esc(r) + '</li>'; }).join('') + '</ol></div>' +
+    '</div>';
+  }).join('');
+
+  document.getElementById('accs').addEventListener('click', function (e) {
+    var h = e.target.closest('.acc-h');
+    if (!h) return;
+    h.parentElement.classList.toggle('on');
+  });
+
+  /* 应急流程 */
+  document.getElementById('flow').innerHTML = S.emergency.map(function (e, i) {
+    return '<div class="f"><div class="dot2">' + (i + 1) + '</div>' +
+      '<h4>' + UI.esc(e.s) + '</h4><p>' + UI.esc(e.d) + '</p></div>';
+  }).join('');
+
+  /* 灭火器四步 */
+  var ext = [
+    { t: '提起', d: '右手握住提把，迅速提至火场（距火源 2—3m）' },
+    { t: '拔销', d: '拔掉铅封与保险销，注意不要捏住压把' },
+    { t: '对准', d: '握住喇叭筒根部，喷嘴对准火焰根部' },
+    { t: '压下', d: '压下压把，左右扫射，直至火焰熄灭' }
+  ];
+  document.getElementById('extSteps').innerHTML = ext.map(function (x, i) {
+    return '<div class="card flat" style="padding:13px 14px">' +
+      '<div class="row" style="gap:8px;margin-bottom:6px"><span class="tag a">' + (i + 1) + '</span><b style="font-size:13px">' + x.t + '</b></div>' +
+      '<p style="font-size:12px;color:var(--sub);line-height:1.8">' + x.d + '</p></div>';
+  }).join('');
+
+  /* 禁止行为 */
+  var bans = [
+    { b: '携带易燃易爆品', d: '打火机、酒精、气雾罐一律不得带入实验室' },
+    { b: '私自改接电源', d: '严禁私拉插排、使用电热器具或为大功率设备供电' },
+    { b: '湿手操作设备', d: '湿手触碰开关与机箱金属外壳，存在触电风险' },
+    { b: '遮挡消防设施', d: '灭火器、配电箱、疏散指示前 1m 内不得堆放物品' },
+    { b: '拆卸机箱部件', d: '未经许可不得开箱、拔插板卡与内存' },
+    { b: '共享账号上网', d: '借用他人账号、私自更改 IP 或接入路由器均属违规' }
+  ];
+  document.getElementById('ban').innerHTML = bans.map(function (x) {
+    return '<div><span class="i">✕</span><div><b>' + x.b + '</b>：' + x.d + '</div></div>';
+  }).join('');
+
+  /* 责任 */
+  var duty = [
+    { t: '谁使用，谁负责', d: '设备损坏须第一时间报告实验教师并填写《设备损坏登记表》，隐瞒不报将按学院规定处理。' },
+    { t: '课前检查，课后交接', d: '班干部负责课前设备清点与课后交接登记，异常设备贴「待修」标签并断电。' },
+    { t: '发现隐患立即报告', d: '异味、异响、冒烟、漏电、地插松动等情况，立即断电并报告，不得自行处置。' }
+  ];
+  document.getElementById('duty').innerHTML = duty.map(function (x) {
+    return '<div class="card flat" style="padding:15px"><h4 style="font-size:13.5px;margin-bottom:7px">' + x.t + '</h4>' +
+      '<p style="font-size:12.5px;color:var(--sub);line-height:1.85">' + x.d + '</p></div>';
+  }).join('');
+})();
+</script>
+</body>
+</html>

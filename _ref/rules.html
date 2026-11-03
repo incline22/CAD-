@@ -1,0 +1,342 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>评分规则 · “坐在AI上”·智能实验操作虚拟仿真创新大赛</title>
+<meta name="description" content="“坐在AI上”·智能实验操作虚拟仿真创新大赛 评分规则：4 大评分维度、满分 100 分，另设加分项（最多 +17 分）。">
+<style>
+:root{
+  --bg:#05080f; --bg2:#0a1424;
+  --panel:rgba(14,23,40,.78); --panel2:rgba(20,32,54,.6);
+  --line:rgba(90,200,255,.16); --line2:rgba(90,200,255,.35);
+  --txt:#e8f2ff; --sub:#8ba0bf; --dim:#5f7599;
+  --cyan:#22d3ee; --blue:#3b82f6; --purple:#8b5cf6; --green:#34d399;
+  --amber:#fbbf24; --red:#f87171;
+  --mono:'SFMono-Regular',Consolas,'Liberation Mono',Menlo,monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+  background:var(--bg); color:var(--txt); min-height:100vh; overflow-x:hidden;
+  -webkit-font-smoothing:antialiased;
+}
+body::before{
+  content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:
+    radial-gradient(900px 520px at 12% -8%, rgba(139,92,246,.18), transparent 62%),
+    radial-gradient(800px 500px at 92% 4%, rgba(34,211,238,.16), transparent 60%),
+    radial-gradient(700px 600px at 50% 108%, rgba(59,130,246,.12), transparent 62%);
+}
+body::after{
+  content:'';position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.45;
+  background-image:linear-gradient(rgba(90,200,255,.05) 1px,transparent 1px),
+                   linear-gradient(90deg,rgba(90,200,255,.05) 1px,transparent 1px);
+  background-size:44px 44px;
+  mask-image:radial-gradient(circle at 50% 22%,#000 0%,transparent 78%);
+  -webkit-mask-image:radial-gradient(circle at 50% 22%,#000 0%,transparent 78%);
+}
+.wrap{position:relative;z-index:1;max-width:1080px;margin:0 auto;padding:30px 20px 60px}
+
+/* 顶部 */
+.top{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:24px}
+.brand{display:flex;align-items:center;gap:14px}
+.logo{width:46px;height:46px;border-radius:13px;flex:0 0 auto;position:relative;
+  background:linear-gradient(135deg,var(--cyan),var(--purple));
+  display:flex;align-items:center;justify-content:center;font-weight:800;font-size:19px;color:#04121c;
+  box-shadow:0 8px 26px rgba(34,211,238,.35)}
+.logo::after{content:'';position:absolute;inset:-5px;border-radius:17px;border:1px solid rgba(34,211,238,.35);
+  animation:ring 3.2s ease-in-out infinite}
+@keyframes ring{0%,100%{transform:scale(1);opacity:.55}50%{transform:scale(1.07);opacity:.15}}
+.brand h1{font-size:16px;font-weight:700;letter-spacing:.3px;line-height:1.35}
+.brand p{font-size:11.5px;color:var(--sub);margin-top:3px;letter-spacing:1.2px}
+.topnav{display:flex;gap:9px;flex-wrap:wrap}
+.topnav a{color:var(--sub);text-decoration:none;font-size:13px;padding:8px 14px;border:1px solid var(--line);
+  border-radius:10px;transition:.2s;background:rgba(12,20,36,.5)}
+.topnav a:hover{color:var(--cyan);border-color:var(--line2);background:rgba(34,211,238,.08)}
+.topnav a.hot{color:var(--txt);border-color:var(--line2);background:rgba(34,211,238,.12)}
+
+/* 标题 */
+.hero{text-align:center;margin:12px 0 30px;position:relative}
+.hero .badge{display:inline-flex;align-items:center;gap:8px;font-size:12px;letter-spacing:1px;color:#c4b5fd;
+  border:1px solid rgba(139,92,246,.35);background:rgba(139,92,246,.1);padding:6px 15px;border-radius:99px;margin-bottom:16px}
+.dot{width:6px;height:6px;border-radius:50%;background:#c4b5fd;box-shadow:0 0 10px #c4b5fd;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+.hero h2{font-size:30px;font-weight:800;letter-spacing:.6px;line-height:1.34;
+  background:linear-gradient(100deg,#fff 10%,var(--cyan) 48%,var(--purple) 90%);
+  -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.hero p{color:var(--sub);font-size:13.5px;margin-top:12px;line-height:1.9}
+
+/* 卡片 */
+.card{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:24px;
+  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  box-shadow:0 20px 60px rgba(0,0,0,.42), 0 0 0 1px rgba(255,255,255,.02) inset}
+.card + .card{margin-top:18px}
+.card-h{display:flex;align-items:center;gap:11px;margin-bottom:18px;padding-bottom:14px;border-bottom:1px solid var(--line)}
+.card-h .ico{width:30px;height:30px;border-radius:9px;background:rgba(34,211,238,.13);color:var(--cyan);
+  display:flex;align-items:center;justify-content:center;font-size:14px;flex:0 0 auto}
+.card-h .ico.p{background:rgba(139,92,246,.16);color:#c4b5fd}
+.card-h .ico.a{background:rgba(251,191,36,.14);color:var(--amber)}
+.card-h h3{font-size:15.5px;font-weight:700;letter-spacing:.3px}
+.card-h .hint{margin-left:auto;font-size:12px;color:var(--sub);white-space:nowrap}
+
+/* 表格 */
+.tbl{width:100%;border-collapse:separate;border-spacing:0;font-size:13px;
+  border:1px solid var(--line);border-radius:14px;overflow:hidden}
+.tbl th{background:rgba(34,211,238,.09);color:var(--cyan);font-size:12.5px;font-weight:700;letter-spacing:.5px;
+  padding:12px 15px;text-align:left;border-bottom:1px solid var(--line);white-space:nowrap}
+.tbl td{padding:12px 15px;border-bottom:1px solid rgba(90,200,255,.08);color:var(--txt);
+  line-height:1.85;vertical-align:top;font-size:12.8px}
+.tbl tbody tr:last-child td{border-bottom:none}
+.tbl tbody tr{transition:.18s}
+.tbl tbody tr:hover td{background:rgba(34,211,238,.045)}
+.tbl .num{font-family:var(--mono);color:var(--cyan);font-weight:700;white-space:nowrap;text-align:center}
+.tbl .rmk{color:var(--sub);font-size:12px}
+.tbl .plus{font-family:var(--mono);font-weight:800;color:var(--green);white-space:nowrap;text-align:center}
+.tbl-wrap{overflow-x:auto}
+
+/* 维度卡 */
+.dims{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
+.dim{border:1px solid var(--line);border-radius:14px;padding:17px;background:rgba(12,20,36,.55);transition:.25s}
+.dim:hover{border-color:var(--line2);transform:translateY(-3px)}
+.dim .dh{display:flex;align-items:baseline;gap:10px;margin-bottom:12px}
+.dim .dh .no{font-family:var(--mono);font-size:12px;color:var(--dim)}
+.dim .dh .nm{font-size:14.5px;font-weight:700}
+.dim .dh .pt{margin-left:auto;font-family:var(--mono);font-size:21px;font-weight:800;
+  background:linear-gradient(100deg,var(--cyan),var(--purple));-webkit-background-clip:text;background-clip:text;
+  -webkit-text-fill-color:transparent}
+.dim .dh .pt small{font-size:11px;font-weight:700}
+.dim ul{list-style:none;display:flex;flex-direction:column;gap:8px}
+.dim li{font-size:12.5px;color:var(--sub);line-height:1.8;display:flex;gap:8px}
+.dim li::before{content:'·';color:var(--cyan);font-weight:800}
+.dim .trackbar{height:5px;border-radius:99px;background:rgba(90,200,255,.12);overflow:hidden;margin-top:13px}
+.dim .trackbar i{display:block;height:100%;border-radius:99px;width:0;transition:width 1.1s cubic-bezier(.3,.9,.4,1);
+  background:linear-gradient(90deg,var(--cyan),var(--purple))}
+.dim.in .trackbar i{width:var(--w)}
+
+/* 高亮块 */
+.hi{border-radius:14px;padding:16px 18px;font-size:13px;line-height:1.9;margin-bottom:16px;
+  display:flex;gap:12px;align-items:flex-start}
+.hi .ic{flex:0 0 auto;font-size:15px;line-height:1.5}
+.hi.warn{background:rgba(251,191,36,.09);border:1px solid rgba(251,191,36,.3);color:#fcd34d}
+.hi.info{background:rgba(34,211,238,.07);border:1px solid rgba(34,211,238,.28);color:#a5f3fc}
+.hi.ok{background:rgba(52,211,153,.08);border:1px solid rgba(52,211,153,.3);color:#6ee7b7}
+.hi b{color:#fff}
+
+/* 页脚 */
+.foot{text-align:center;color:#46587a;font-size:12px;margin-top:38px;line-height:2.1;
+  border-top:1px solid var(--line);padding-top:22px}
+.foot a{color:var(--sub);text-decoration:none;margin:0 7px}
+.foot a:hover{color:var(--cyan)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:9px;padding:13px 28px;border-radius:12px;
+  font-size:14px;font-weight:700;letter-spacing:.5px;cursor:pointer;border:none;font-family:inherit;
+  transition:.22s;text-decoration:none}
+.btn-primary{color:#04121c;background:linear-gradient(100deg,var(--cyan),var(--blue) 55%,var(--purple));
+  box-shadow:0 12px 34px rgba(34,211,238,.3)}
+.btn-primary:hover{transform:translateY(-3px);box-shadow:0 18px 46px rgba(34,211,238,.45)}
+.btn-ghost{color:var(--txt);background:rgba(255,255,255,.05);border:1px solid var(--line)}
+.btn-ghost:hover{border-color:var(--line2);color:var(--cyan);transform:translateY(-2px)}
+.backbar{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:28px}
+
+@media(max-width:860px){
+  .dims{grid-template-columns:1fr}
+}
+@media(max-width:760px){
+  .wrap{padding:20px 14px 48px}
+  .hero h2{font-size:21px}
+  .card{padding:18px 15px;border-radius:15px}
+  .tbl{font-size:12px}
+  .tbl th,.tbl td{padding:10px 11px}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <div class="brand">
+      <div class="logo">AI</div>
+      <div>
+        <h1>“坐在AI上”·智能实验操作虚拟仿真创新大赛</h1>
+        <p>SCORING RULES · 评分规则</p>
+      </div>
+    </div>
+    <nav class="topnav">
+      <a href="index.html">返回主页</a>
+      <a class="hot" href="reg.html">我要报名</a>
+      <a href="awards.html">奖项设置</a>
+    </nav>
+  </div>
+
+  <div class="hero">
+    <div class="badge"><span class="dot"></span>评审办法与评分标准</div>
+    <h2>评分规则</h2>
+    <p>一轮网络评审、直接评奖。评分表设 <b style="color:#22d3ee">4 个维度、满分 100 分</b>，另设<b style="color:#34d399">加分项</b>（最多 +17 分）。<br>
+       本届赛事不划分文理科，全校统一标准、统一排名。</p>
+  </div>
+
+  <!-- 评分标准 -->
+  <div class="card">
+    <div class="card-h">
+      <div class="ico">⚖</div>
+      <h3>一、评分标准（总分 100 分）</h3>
+      <span class="hint">来源：竞赛方案 第六章</span>
+    </div>
+
+    <div class="dims">
+      <div class="dim" style="--w:100%">
+        <div class="dh">
+          <span class="no">01</span>
+          <span class="nm">设备覆盖与内容完整度</span>
+          <span class="pt">35<small>分</small></span>
+        </div>
+        <ul>
+          <li>设备覆盖率达 80%（25 分），每低 5 个百分点扣 3 分</li>
+          <li>实验室简介与功能定位清晰（4 分）</li>
+          <li>安全规范与操作规程完整（3 分）</li>
+          <li>开放信息与联系方式完整（3 分）</li>
+        </ul>
+        <div class="trackbar"><i></i></div>
+      </div>
+
+      <div class="dim" style="--w:71.4%">
+        <div class="dh">
+          <span class="no">02</span>
+          <span class="nm">专业准确性与场景还原度</span>
+          <span class="pt">25<small>分</small></span>
+        </div>
+        <ul>
+          <li>设备名称、型号、数量与实验室台账一致（15 分）</li>
+          <li>设备用途、原理、技术参数等专业描述准确，场景呈现符合真实使用情况（10 分）</li>
+        </ul>
+        <div class="trackbar"><i></i></div>
+      </div>
+
+      <div class="dim" style="--w:85.7%">
+        <div class="dh">
+          <span class="no">03</span>
+          <span class="nm">交互与虚拟仿真能力</span>
+          <span class="pt">30<small>分</small></span>
+        </div>
+        <ul>
+          <li>交互设计：设备详情、分类筛选、检索、图片放大、动画演示（15 分）</li>
+          <li>虚拟仿真：设备操作模拟、实验流程模拟、业务场景模拟（15 分）</li>
+        </ul>
+        <div class="trackbar"><i></i></div>
+      </div>
+
+      <div class="dim" style="--w:28.6%">
+        <div class="dh">
+          <span class="no">04</span>
+          <span class="nm">展示效果</span>
+          <span class="pt">10<small>分</small></span>
+        </div>
+        <ul>
+          <li>视觉设计与学校 VI 系统风格兼容，页面美观（10 分）</li>
+        </ul>
+        <div class="trackbar"><i></i></div>
+      </div>
+    </div>
+
+    <div class="hi info" style="margin:18px 0 0">
+      <span class="ic">◈</span>
+      <div><b>分值分布：</b>设备覆盖与内容完整度 35 分（35%）＞ 交互与虚拟仿真能力 30 分（30%）＞ 专业准确性与场景还原度 25 分（25%）＞ 展示效果 10 分（10%）。<br>
+        四项相加 = 100 分。</div>
+    </div>
+  </div>
+
+  <!-- 加分项 -->
+  <div class="card">
+    <div class="card-h">
+      <div class="ico a">＋</div>
+      <h3>二、加分项（独立计分，最多 +17 分）</h3>
+      <span class="hint">加分后总分不超过 100 分</span>
+    </div>
+
+    <div class="tbl-wrap">
+      <table class="tbl">
+        <thead>
+          <tr>
+            <th style="width:34px">#</th>
+            <th style="width:190px">加分项</th>
+            <th style="width:74px">分值</th>
+            <th>认定标准</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="num">1</td>
+            <td>三维模型 / 全景图 / VR 展示</td>
+            <td class="plus">+3</td>
+            <td>作品中含真实实验室的三维模型或全景图</td>
+          </tr>
+          <tr>
+            <td class="num">2</td>
+            <td>移动端专项优化</td>
+            <td class="plus">+2</td>
+            <td>针对手机端做专门优化，具备良好移动端体验</td>
+          </tr>
+          <tr>
+            <td class="num">3</td>
+            <td>提供可复用的模板或组件</td>
+            <td class="plus">+2</td>
+            <td>产出可供其他实验室直接套用的页面模板或组件库</td>
+          </tr>
+          <tr>
+            <td class="num">4</td>
+            <td>实验（实训）项目</td>
+            <td class="plus">+10</td>
+            <td>基于实验室已有设备，以本校真实开设、对应到一间实体实验室的单个实验（实训）项目为内容，
+                完整呈现项目目标、原理或业务规则、设备与软件环境、操作步骤、成果要求与考核方式；
+                <span class="rmk">同一项目不重复计分</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="hi ok" style="margin:18px 0 0">
+      <span class="ic">★</span>
+      <div><b>加分项是「额外机会」，不是必答项。</b>完成实验室设备展示页后，可自选一个与本实验室相关的真实实验项目补充进作品。
+        实验（实训）项目须写清归属信息：<b>实验项目名称、所属实验室名称与房间号、对应课程、面向专业与年级</b>；
+        呈现方式可采用业务流程模拟、岗位工作场景模拟，或审判 / 做账 / 播音 / 采编等场景化演示。</div>
+    </div>
+  </div>
+
+  <div class="backbar">
+    <a class="btn btn-primary" href="reg.html">我要报名 →</a>
+    <a class="btn btn-ghost" href="awards.html">🏆 奖项设置</a>
+    <a class="btn btn-ghost" href="index.html">返回主页</a>
+  </div>
+
+  <div class="foot">
+    <div>主办单位：教学资源中心</div>
+    <div>“坐在AI上”·智能实验操作虚拟仿真创新大赛 · 评分规则以竞赛方案第六章为准</div>
+  </div>
+</div>
+
+<script>
+(function(){
+  /* 维度分值条：滚入视口时展开 */
+  var dims = document.querySelectorAll('.dim');
+  function show(){
+    for (var i = 0; i < dims.length; i++){
+      (function(el, i){
+        setTimeout(function(){ el.classList.add('in'); }, 90 * i);
+      })(dims[i], i);
+    }
+  }
+  if (window.IntersectionObserver){
+    var io = new IntersectionObserver(function(es){
+      for (var i = 0; i < es.length; i++){
+        if (es[i].isIntersecting){ show(); io.disconnect(); break; }
+      }
+    }, { threshold: 0.2 });
+    if (dims.length){ io.observe(dims[0]); }
+  } else {
+    show();
+  }
+})();
+</script>
+</body>
+</html>

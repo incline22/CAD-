@@ -1,0 +1,18 @@
+2026-11-03 05:06:08.385: [INFO] CurrentProfilePath: E:\CAD机房虚拟仿真实验室\_build\ud2_experiment2400\Default
+2026-11-03 05:06:08.385: [INFO] Profiles total count: 1
+2026-11-03 05:06:08.385: [INFO] Profile: name=用户配置 1 path=E:\CAD机房虚拟仿真实验室\_build\ud2_experiment2400\Default lastActive=2026-11-03T05:06:08.374Z
+2026-11-03 05:06:08.385: [INFO] LastUsedProfileDir: E:\CAD机房虚拟仿真实验室\_build\ud2_experiment2400\Default
+2026-11-03 05:06:08.385: [INFO] MostRecentlyActiveProfile: name=用户配置 1 path=E:\CAD机房虚拟仿真实验室\_build\ud2_experiment2400\Default lastActive=2026-11-03T05:06:08.374Z
+2026-11-03 05:06:08.385: [INFO] OnDoneLoading sync enabled: 0
+2026-11-03 05:06:08.386: [INFO] BookmarkModelLoaded, ids_reassigned: 0
+2026-11-03 05:06:08.386: [INFO] BookmarksLoadDropped droppedNodes=0
+2026-11-03 05:06:08.386: [INFO] BookmarksSnapshot Startup total=0 bar=0 other=0 mobile=0 showBar=0 showBarNTP=1
+2026-11-03 05:06:08.418: [INFO] RecordSyncInitDuration has_sync_been_enabled: 0 state: 0
+2026-11-03 05:06:08.491: [INFO] VisibilityChanged: 0
+2026-11-03 05:06:09.362: [INFO] RecordSyncInitDuration has_sync_been_enabled: 0 state: 0
+2026-11-03 05:06:09.364: [INFO] RecordSyncInitDuration has_sync_been_enabled: 0 state: 3
+2026-11-03 05:06:09.365: [INFO] Primary account changed.
+2026-11-03 05:06:09.365: [INFO] OnPrimaryAccountChanged PrimaryAccountChangeEvent::Type::kSet
+2026-11-03 05:06:09.371: [INFO] RecordSyncInitDuration has_sync_been_enabled: 0 state: 3
+2026-11-03 05:06:09.378: [INFO] RecordSyncInitDuration has_sync_been_enabled: 0 state: 3
+2026-11-03 05:06:10.494: [INFO] BookmarksSnapshot Shutdown total=0 bar=0 other=0 mobile=0 showBar=0 showBarNTP=1

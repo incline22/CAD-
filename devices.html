@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#060d18">
+<title>设备台账 · 计算机辅助设计实验室（A-305）</title>
+<meta name="description" content="实验室 20 类设备台账：型号、数量、技术参数、用途原理与操作规程，支持分类筛选、关键词检索与图片放大。">
+<link rel="stylesheet" href="assets/css/theme.css">
+<style>
+  .toolbar{display:flex;gap:12px;flex-wrap:wrap;align-items:center;margin-bottom:16px}
+  .view-switch{display:flex;border:1px solid var(--line);border-radius:10px;overflow:hidden;flex:0 0 auto}
+  .view-switch button{
+    padding:9px 15px;font-size:12.5px;background:rgba(10,20,34,.6);color:var(--sub);border:none;
+    border-right:1px solid var(--line);
+  }
+  .view-switch button:last-child{border-right:none}
+  .view-switch button.on{background:rgba(34,211,238,.14);color:var(--cyan);font-weight:700}
+  .count-line{font-size:12.5px;color:var(--dim);margin-bottom:14px}
+  .count-line b{color:var(--cyan);font-family:var(--mono)}
+  #tableWrap{display:none}
+  #tableWrap.on{display:block}
+  .empty{
+    text-align:center;padding:56px 20px;color:var(--dim);font-size:13px;
+    border:1px dashed var(--line-2);border-radius:var(--r);
+  }
+  .tagrow{display:flex;gap:6px;flex-wrap:wrap;margin-top:2px}
+  table.tbl tr.rowclick{cursor:pointer}
+</style>
+</head>
+<body data-page="devices">
+
+<header data-shell="nav"></header>
+
+<main>
+  <section class="section tight" style="padding-top:34px">
+    <div class="wrap">
+      <div class="sec-head">
+        <div>
+          <div class="eyebrow" style="margin-bottom:12px"><span class="dot"></span>设备台账与档案</div>
+          <h2 class="h">计算机辅助设计实验室 · 设备清单</h2>
+        </div>
+        <div class="hint">数据来源：实验室设备台账（可替换）</div>
+      </div>
+
+      <div class="stats" style="margin-bottom:20px" id="devStats"></div>
+
+      <div class="card" style="padding:18px">
+        <div class="toolbar">
+          <div class="search">
+            <span class="s-ico">🔍</span>
+            <input class="input" id="q" type="search" placeholder="搜索设备名称、型号、编号或功能关键词，如「绘图仪」「交换机」「ThinkStation」" autocomplete="off">
+          </div>
+          <div class="view-switch" role="group" aria-label="视图切换">
+            <button class="on" data-view="card">卡片视图</button>
+            <button data-view="table">台账表格</button>
+          </div>
+        </div>
+        <div class="chips" id="chips"></div>
+      </div>
+
+      <div class="count-line" id="countLine" style="margin-top:18px"></div>
+
+      <div class="dev-grid" id="grid"></div>
+      <div id="tableWrap">
+        <div class="tbl-wrap">
+          <table class="tbl">
+            <thead>
+              <tr>
+                <th style="width:56px">序号</th>
+                <th style="width:88px">设备编号</th>
+                <th>设备名称</th>
+                <th>型号规格</th>
+                <th style="width:86px">数量</th>
+                <th style="width:120px">分类</th>
+                <th style="width:74px">操作</th>
+              </tr>
+            </thead>
+            <tbody id="tbody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="hi info" style="margin-top:22px">
+        <span class="ic">◈</span>
+        <div><b>使用说明：</b>点击设备卡片查看完整档案（技术参数 / 用途 / 原理 / 操作规程 / 动画演示）；点击卡片插图可放大查看低多边形图形。<b>设备覆盖率 100%</b> 指台账中 20 类设备均已建立三维模型的对应热点。</div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer data-shell="footer"></footer>
+
+<script src="assets/js/data.js"></script>
+<script src="assets/js/glyphs.js"></script>
+<script src="assets/js/ui.js"></script>
+<script src="assets/js/anim.js"></script>
+<script>
+(function () {
+  var L = window.LAB, UI = window.UI;
+  UI.init('devices');
+
+  var qEl = document.getElementById('q');
+  var chipsEl = document.getElementById('chips');
+  var gridEl = document.getElementById('grid');
+  var tableWrap = document.getElementById('tableWrap');
+  var tbody = document.getElementById('tbody');
+  var countLine = document.getElementById('countLine');
+
+  var state = { q: '', cat: 'all', view: 'card' };
+
+  /* URL 参数 */
+  var sp = new URLSearchParams(location.search);
+  if (sp.get('cat')) state.cat = sp.get('cat');
+  if (sp.get('q')) state.q = sp.get('q');
+  qEl.value = state.q;
+
+  /* 统计 */
+  var totalQty = L.devices.reduce(function (a, x) { return a + (x.unit === '㎡' ? 0 : x.qty); }, 0);
+  document.getElementById('devStats').innerHTML =
+    '<div class="stat"><div class="v"><span data-count="' + L.devices.length + '">0</span><small> 类</small></div><div class="k">设备种类</div></div>' +
+    '<div class="stat"><div class="v"><span data-count="' + totalQty + '">0</span><small> 台/套</small></div><div class="k">设备总数量</div></div>' +
+    '<div class="stat"><div class="v"><span data-count="' + L.categories.length + '">0</span><small> 类</small></div><div class="k">设备分类</div></div>' +
+    '<div class="stat"><div class="v"><span data-count="100">0</span><small> %</small></div><div class="k">三维建模覆盖</div></div>';
+
+  /* 分类筛选 */
+  var counts = {};
+  L.devices.forEach(function (x) { counts[x.cat] = (counts[x.cat] || 0) + 1; });
+  chipsEl.innerHTML =
+    '<button class="chip' + (state.cat === 'all' ? ' on' : '') + '" data-cat="all">全部 · ' + L.devices.length + '</button>' +
+    L.categories.map(function (c) {
+      return '<button class="chip' + (state.cat === c.id ? ' on' : '') + '" data-cat="' + c.id + '">' + c.icon + ' ' + UI.esc(c.name) + ' · ' + (counts[c.id] || 0) + '</button>';
+    }).join('');
+
+  chipsEl.addEventListener('click', function (e) {
+    var b = e.target.closest('[data-cat]');
+    if (!b) return;
+    state.cat = b.dataset.cat;
+    Array.prototype.forEach.call(chipsEl.children, function (c) { c.classList.toggle('on', c === b); });
+    render();
+  });
+
+  qEl.addEventListener('input', UI.debounce(function () { state.q = qEl.value.trim(); render(); }, 160));
+
+  Array.prototype.forEach.call(document.querySelectorAll('[data-view]'), function (b) {
+    b.addEventListener('click', function () {
+      state.view = b.dataset.view;
+      Array.prototype.forEach.call(document.querySelectorAll('[data-view]'), function (x) { x.classList.toggle('on', x === b); });
+      render();
+    });
+  });
+
+  function match(dev) {
+    if (state.cat !== 'all' && dev.cat !== state.cat) return false;
+    if (!state.q) return true;
+    var q = state.q.toLowerCase();
+    var hay = [dev.no, dev.name, dev.model, dev.summary, dev.purpose, UI.catName(dev.cat)]
+      .concat(dev.spec.map(function (s) { return s.k + ' ' + s.v; })).join(' ').toLowerCase();
+    return hay.indexOf(q) >= 0;
+  }
+
+  function render() {
+    var list = L.devices.filter(match);
+    countLine.innerHTML = '当前显示 <b>' + list.length + '</b> / ' + L.devices.length + ' 类设备' +
+      (state.cat !== 'all' ? '　分类：<b>' + UI.esc(UI.catName(state.cat)) + '</b>' : '') +
+      (state.q ? '　关键词：<b>' + UI.esc(state.q) + '</b>' : '');
+
+    gridEl.style.display = state.view === 'card' ? 'grid' : 'none';
+    tableWrap.classList.toggle('on', state.view === 'table');
+
+    if (!list.length) {
+      gridEl.innerHTML = '<div class="empty" style="grid-column:1/-1">没有匹配的设备，换个关键词试试～</div>';
+      tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:var(--dim);padding:30px">没有匹配的设备</td></tr>';
+      return;
+    }
+
+    /* 卡片 */
+    gridEl.innerHTML = list.map(function (dev) {
+      return '<article class="dev reveal" data-dev="' + dev.no + '">' +
+        '<div class="dev-fig" data-zoom="' + dev.no + '">' + window.getGlyph(dev.glyph) + '<span class="zoom">🔍 放大</span></div>' +
+        '<div class="dev-body">' +
+          '<h4>' + UI.esc(dev.name) + '</h4>' +
+          '<div class="model">' + UI.esc(dev.model) + '</div>' +
+          '<p>' + UI.esc(dev.summary) + '</p>' +
+          '<div class="tagrow">' +
+            '<span class="tag v">' + UI.esc(UI.catName(dev.cat)) + '</span>' +
+            '<span class="tag d">' + UI.esc(dev.no) + '</span>' +
+          '</div>' +
+          '<div class="dev-foot">' +
+            '<span class="qty">' + dev.qty + ' <small>' + UI.esc(dev.unit) + '</small></span>' +
+            '<button class="btn btn-ghost btn-sm" data-detail="' + dev.no + '">详情 →</button>' +
+          '</div>' +
+        '</div>' +
+      '</article>';
+    }).join('');
+
+    /* 表格 */
+    tbody.innerHTML = list.map(function (dev, i) {
+      return '<tr class="rowclick" data-dev="' + dev.no + '">' +
+        '<td class="num">' + (i + 1) + '</td>' +
+        '<td class="mono" style="color:var(--cyan);white-space:nowrap">' + UI.esc(dev.no) + '</td>' +
+        '<td><b>' + UI.esc(dev.name) + '</b></td>' +
+        '<td class="mono" style="font-size:12px">' + UI.esc(dev.model) + '</td>' +
+        '<td class="num" style="text-align:left">' + dev.qty + ' ' + UI.esc(dev.unit) + '</td>' +
+        '<td>' + UI.esc(UI.catName(dev.cat)) + '</td>' +
+        '<td><button class="btn btn-ghost btn-sm" data-detail="' + dev.no + '">详情</button></td>' +
+      '</tr>';
+    }).join('');
+
+    UI.reveal();
+
+    /* 详情与放大 */
+    Array.prototype.forEach.call(document.querySelectorAll('[data-detail]'), function (b) {
+      b.addEventListener('click', function (e) {
+        e.stopPropagation();
+        var dev = byNo(b.dataset.detail);
+        if (dev) openDev(dev);
+      });
+    });
+    Array.prototype.forEach.call(document.querySelectorAll('[data-zoom]'), function (f) {
+      f.addEventListener('click', function (e) {
+        e.stopPropagation();
+        var dev = byNo(f.dataset.zoom);
+        if (dev) UI.zoomDevice(dev);
+      });
+    });
+    Array.prototype.forEach.call(document.querySelectorAll('[data-dev]'), function (c) {
+      c.addEventListener('click', function () {
+        var dev = byNo(c.dataset.dev);
+        if (dev) openDev(dev);
+      });
+    });
+  }
+
+  function byNo(no) {
+    for (var i = 0; i < L.devices.length; i++) if (L.devices[i].no === no) return L.devices[i];
+    return null;
+  }
+
+  function openDev(dev) {
+    var demo = window.getDemo(dev.anim, dev);
+    var extra = '<div class="card-h" style="margin-bottom:10px"><span class="ico">▶</span><h3>动画演示</h3><span class="hint">' + UI.esc(UI.catName(dev.cat)) + '</span></div>' + demo;
+    UI.open(
+      '设备档案 <span class="tag d" style="margin-left:8px">' + UI.esc(dev.no) + '</span>',
+      UI.deviceDetail(dev, extra),
+      {
+        wide: true,
+        onOpen: function (m) {
+          var b = m.querySelector('[data-act="zoom"]');
+          if (b) b.addEventListener('click', function () { UI.zoomDevice(dev); });
+        }
+      }
+    );
+  }
+
+  render();
+  UI.reveal();
+  UI.countUp();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#060d18">
+<title>三维机房漫游 · 计算机辅助设计实验室（A-305）</title>
+<meta name="description" content="低多边形三维机房漫游：40 个工位、15 个设备热点、自动巡检与第一人称漫游。">
+<link rel="stylesheet" href="assets/css/theme.css">
+<style>
+  body{overflow:hidden}
+  #stage{
+    position:fixed;left:0;right:0;top:var(--nav-h);bottom:0;z-index:1;
+    background:radial-gradient(circle at 50% 40%,#0f2135,#060d18 72%);
+  }
+  #stage canvas{display:block}
+
+  .hud{position:fixed;z-index:20}
+  .hud-tl{left:22px;top:calc(var(--nav-h) + 16px);pointer-events:none}
+  .hud-tl h2{font-size:16px;font-weight:750;letter-spacing:.4px}
+  .hud-tl p{font-size:11.5px;color:var(--sub);margin-top:4px;letter-spacing:.6px}
+  .hud-chip{
+    display:inline-flex;align-items:center;gap:7px;margin-top:9px;font-size:11.5px;
+    border:1px solid var(--line-2);border-radius:99px;padding:4px 12px;background:rgba(6,16,28,.8);
+    color:var(--cyan);backdrop-filter:blur(8px);
+  }
+
+  .hud-bar{
+    left:50%;transform:translateX(-50%);bottom:20px;display:flex;gap:8px;flex-wrap:wrap;
+    justify-content:center;max-width:min(940px,94vw);padding:9px 11px;border-radius:16px;
+    background:rgba(6,15,26,.86);border:1px solid var(--line);
+    backdrop-filter:blur(14px);box-shadow:var(--shadow);
+  }
+  .hud-bar .grp{display:flex;gap:5px;align-items:center;padding-right:6px;border-right:1px solid var(--line)}
+  .hud-bar .grp:last-child{border-right:none;padding-right:0}
+  .hud-bar .lbl{font-size:10.5px;color:var(--dim);letter-spacing:1px;margin-right:2px}
+  .hbtn{
+    font-size:12px;padding:7px 12px;border-radius:9px;border:1px solid transparent;
+    background:rgba(255,255,255,.04);color:var(--sub);transition:.18s;white-space:nowrap;
+  }
+  .hbtn:hover{color:var(--txt);background:rgba(34,211,238,.1);border-color:var(--line)}
+  .hbtn.on{color:#04121c;background:linear-gradient(100deg,var(--cyan),var(--blue));font-weight:700}
+
+  .panel{
+    position:fixed;z-index:30;right:16px;top:calc(var(--nav-h) + 16px);bottom:16px;width:390px;max-width:calc(100vw - 32px);
+    background:linear-gradient(180deg,rgba(13,26,44,.97),rgba(9,18,32,.97));
+    border:1px solid var(--line-2);border-radius:18px;box-shadow:0 30px 80px rgba(0,0,0,.6);
+    transform:translateX(calc(100% + 24px));transition:transform .38s cubic-bezier(.2,.9,.3,1);
+    display:flex;flex-direction:column;overflow:hidden;backdrop-filter:blur(16px);
+  }
+  .panel.on{transform:none}
+  .panel-h{display:flex;align-items:center;gap:10px;padding:14px 16px;border-bottom:1px solid var(--line);flex:0 0 auto}
+  .panel-h b{font-size:14px}
+  .panel-h .x{margin-left:auto;width:30px;height:30px;border-radius:9px;border:1px solid var(--line);background:rgba(255,255,255,.04);color:var(--sub)}
+  .panel-b{overflow:auto;padding:15px 16px 22px;flex:1}
+  .panel-tip{font-size:12px;color:var(--dim);line-height:1.9}
+
+  .legend{
+    position:fixed;z-index:20;left:22px;bottom:20px;font-size:11px;color:var(--dim);
+    background:rgba(6,15,26,.8);border:1px solid var(--line);border-radius:12px;padding:10px 13px;
+    backdrop-filter:blur(10px);line-height:1.9;
+  }
+  .legend b{color:var(--sub);font-weight:600}
+  .legend kbd{
+    display:inline-block;font-family:var(--mono);font-size:10px;border:1px solid var(--line-2);
+    border-radius:5px;padding:0 5px;color:var(--cyan);background:rgba(34,211,238,.08);
+  }
+
+  .loading{
+    position:fixed;inset:var(--nav-h) 0 0 0;z-index:40;display:grid;place-items:center;
+    background:radial-gradient(circle at 50% 45%,#0f2135,#060d18 70%);transition:opacity .5s;
+  }
+  .loading.off{opacity:0;pointer-events:none}
+  .loading .in{text-align:center}
+  .loading .ring{
+    width:52px;height:52px;border-radius:50%;margin:0 auto 16px;
+    border:2px solid rgba(34,211,238,.18);border-top-color:var(--cyan);animation:spin 1s linear infinite;
+  }
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .loading p{font-size:12.5px;color:var(--sub);letter-spacing:1px}
+
+  @media(max-width:860px){
+    .hud-tl{left:14px;top:calc(var(--nav-h) + 10px)}
+    .hud-tl h2{font-size:13.5px}
+    .panel{left:10px;right:10px;width:auto;top:auto;height:56vh;bottom:10px;transform:translateY(calc(100% + 20px))}
+    .panel.on{transform:none}
+    .legend{display:none}
+    .hud-bar{bottom:10px;left:10px;right:10px;transform:none;max-width:none;padding:7px 8px;gap:5px}
+    .hbtn{font-size:11px;padding:6px 9px}
+    .hud-bar .lbl{display:none}
+    .hud-bar .grp{padding-right:4px}
+  }
+</style>
+</head>
+<body data-page="lab3d">
+
+<header data-shell="nav"></header>
+
+<div id="stage"></div>
+
+<div class="hud hud-tl">
+  <h2>三维机房漫游</h2>
+  <p>计算机辅助设计实验室 · A-305 · 40 工位</p>
+  <div class="hud-chip"><span class="dot g"></span><span id="modeText">轨道环视模式</span></div>
+</div>
+
+<div class="hud hud-bar" role="toolbar" aria-label="三维场景控制">
+  <div class="grp">
+    <span class="lbl">视角</span>
+    <button class="hbtn" data-preset="overview">全景</button>
+    <button class="hbtn" data-preset="podium">讲台</button>
+    <button class="hbtn" data-preset="teacher">教师位</button>
+    <button class="hbtn" data-preset="student">学生位</button>
+    <button class="hbtn" data-preset="devices">设备区</button>
+    <button class="hbtn" data-preset="output">输出区</button>
+  </div>
+  <div class="grp">
+    <span class="lbl">模式</span>
+    <button class="hbtn" id="btnOrbit">轨道</button>
+    <button class="hbtn" id="btnWalk">漫游</button>
+    <button class="hbtn" id="btnTour">巡检</button>
+  </div>
+  <div class="grp">
+    <span class="lbl">显示</span>
+    <button class="hbtn on" id="btnLabels">热点标签</button>
+    <button class="hbtn" id="btnReset">复位</button>
+  </div>
+</div>
+
+<aside class="panel" id="panel">
+  <div class="panel-h"><b id="panelTitle">设备信息</b><button class="x" id="panelClose" aria-label="关闭">✕</button></div>
+  <div class="panel-b" id="panelBody"></div>
+</aside>
+
+<div class="legend">
+  <b>操作</b>：左键拖动环视 · 右键拖动平移 · 滚轮缩放<br>
+  <b>漫游</b>：<kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> 移动 · <kbd>Shift</kbd> 加速 · 拖动转向<br>
+  <b>热点</b>：点击设备查看档案
+</div>
+
+<div class="loading" id="loading"><div class="in"><div class="ring"></div><p>正在构建低多边形机房…</p></div></div>
+
+<footer data-shell="footer" style="display:none"></footer>
+
+<script src="assets/js/data.js"></script>
+<script src="assets/js/glyphs.js"></script>
+<script src="assets/js/ui.js"></script>
+<script src="assets/js/vendor/three.min.js"></script>
+<script src="assets/js/scene3d.js"></script>
+<script>
+(function () {
+  var UI = window.UI, L = window.LAB;
+  UI.buildShell('lab3d');
+  var foot = document.querySelector('.foot');
+  if (foot) foot.remove();
+
+  var stage = document.getElementById('stage');
+  var panel = document.getElementById('panel');
+  var panelTitle = document.getElementById('panelTitle');
+  var panelBody = document.getElementById('panelBody');
+  var modeText = document.getElementById('modeText');
+
+  var app = window.Scene3D.init(stage, {
+    onSelect: function (dev, hot) {
+      panelTitle.textContent = dev.name;
+      panelBody.innerHTML = UI.deviceDetail(dev,
+        '<div class="hi info" style="margin-bottom:14px"><span class="ic">◉</span><div>你点中的是三维场景中的「' + UI.esc(hot.label) + '」，它对应台账设备 ' + UI.esc(dev.no) + '。</div></div>'
+      ) +
+      '<div class="row" style="margin-top:16px;gap:8px">' +
+        '<a class="btn btn-primary btn-sm" href="devices.html?q=' + encodeURIComponent(dev.no) + '">在台账中查看</a>' +
+        '<button class="btn btn-ghost btn-sm" id="flyNear">🎯 飞近观察</button>' +
+      '</div>';
+      panel.classList.add('on');
+
+      var near = document.getElementById('flyNear');
+      if (near) near.addEventListener('click', function () {
+        var c = app.camera.position;
+        var target = new THREE.Vector3(hot.pos[0], hot.pos[1], hot.pos[2]);
+        var dir = new THREE.Vector3().subVectors(c, target).normalize();
+        var pos = target.clone().add(dir.multiplyScalar(2.6));
+        pos.y = Math.max(1.1, Math.min(2.4, pos.y));
+        app.flyTo({ pos: pos, target: target });
+        panel.classList.remove('on');
+      });
+    },
+    onMode: function (m) {
+      var map = { orbit: '轨道环视模式', walk: '第一人称漫游 · WASD 移动', tour: '自动巡检 · 正在播放' };
+      modeText.textContent = map[m] || m;
+      document.getElementById('btnOrbit').classList.toggle('on', m === 'orbit');
+      document.getElementById('btnWalk').classList.toggle('on', m === 'walk');
+      document.getElementById('btnTour').classList.toggle('on', m === 'tour');
+    }
+  });
+
+  document.getElementById('panelClose').addEventListener('click', function () {
+    panel.classList.remove('on');
+  });
+
+  /* 视角 */
+  function applyPreset(name) {
+    var p = app.presets[name];
+    if (!p) return;
+    if (p.mode === 'walk') {
+      app.setMode('walk');
+      app.state.walkPos.copy(p.pos); app.state.walkPos.y = 1.62;
+      var d = new THREE.Vector3().subVectors(p.target, p.pos);
+      app.state.walkYaw = Math.atan2(-d.x, -d.z);
+      app.state.walkPitch = Math.asin(Math.max(-1, Math.min(1, d.clone().normalize().y)));
+    } else {
+      app.setMode('orbit');
+      app.flyTo(p);
+    }
+  }
+  Array.prototype.forEach.call(document.querySelectorAll('[data-preset]'), function (b) {
+    b.addEventListener('click', function () { applyPreset(b.dataset.preset); });
+  });
+  /* 支持外部链接直达视角：lab3d.html?view=podium */
+  var viewParam = new URLSearchParams(location.search).get('view');
+  if (viewParam) setTimeout(function () { applyPreset(viewParam); }, 520);
+
+  document.getElementById('btnOrbit').addEventListener('click', function () { app.setMode('orbit'); app.flyTo(app.presets.overview); });
+  document.getElementById('btnWalk').addEventListener('click', function () {
+    app.setMode('walk');
+    app.state.walkPos.set(0, 1.62, 6.6);
+    app.state.walkYaw = Math.PI; app.state.walkPitch = -0.02;
+    modeText.textContent = '第一人称漫游 · WASD 移动 · 拖动转向';
+  });
+  document.getElementById('btnTour').addEventListener('click', function () {
+    if (app.state.mode === 'tour') app.stopTour(); else app.startTour();
+  });
+  document.getElementById('btnLabels').addEventListener('click', function () {
+    var v = app.toggleLabels();
+    this.classList.toggle('on', v);
+  });
+  document.getElementById('btnReset').addEventListener('click', function () {
+    app.setMode('orbit');
+    app.flyTo(app.presets.overview);
+    panel.classList.remove('on');
+  });
+
+  /* 座位定位 */
+  var seat = new URLSearchParams(location.search).get('seat');
+  if (seat) setTimeout(function () { app.focusSeat(parseInt(seat, 10)); }, 700);
+
+  /* 移除加载层 */
+  setTimeout(function () {
+    var l = document.getElementById('loading');
+    l.classList.add('off');
+    setTimeout(function () { l.style.display = 'none'; }, 560);
+  }, 420);
+})();
+</script>
+</body>
+</html>

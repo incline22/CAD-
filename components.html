@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#060d18">
+<title>组件库 · CAD 机房虚拟仿真系统</title>
+<meta name="description" content="可复用的实验室虚拟仿真组件库：设备卡片、检索筛选、台账表格、步骤流程、动画演示与数据模板，供其他实验室直接套用。">
+<link rel="stylesheet" href="assets/css/theme.css">
+<style>
+  .cmp{border:1px solid var(--line);border-radius:var(--r-lg);overflow:hidden;background:rgba(10,20,34,.6);margin-bottom:20px}
+  .cmp-h{display:flex;align-items:center;gap:10px;padding:14px 18px;border-bottom:1px solid var(--line);background:rgba(33,58,84,.28)}
+  .cmp-h h3{font-size:14px;font-weight:700}
+  .cmp-h .no{font-family:var(--mono);font-size:11px;color:var(--cyan);border:1px solid var(--line-2);border-radius:5px;padding:1px 7px}
+  .cmp-h .copy{margin-left:auto}
+  .cmp-b{padding:18px}
+  .cmp-b.split{display:grid;grid-template-columns:1fr 1fr;gap:18px;align-items:start}
+  pre.code{
+    margin:0;background:#050e18;border:1px solid var(--line);border-radius:11px;padding:13px 15px;
+    overflow:auto;max-height:320px;font-family:var(--mono);font-size:11.5px;line-height:1.75;color:#a8c6dd;
+  }
+  pre.code .k{color:#67e8f9}
+  pre.code .a{color:#c4b5fd}
+  pre.code .s{color:#86efac}
+  .label{font-size:11px;letter-spacing:1px;color:var(--dim);margin-bottom:8px}
+  .anchor-list{position:sticky;top:calc(var(--nav-h) + 16px);display:flex;flex-direction:column;gap:5px}
+  .anchor-list a{font-size:12.5px;color:var(--sub);padding:7px 12px;border-radius:8px;border:1px solid transparent}
+  .anchor-list a:hover{color:var(--cyan);background:rgba(34,211,238,.08);border-color:var(--line)}
+  .layout{display:grid;grid-template-columns:200px 1fr;gap:22px;align-items:start}
+  @media(max-width:960px){.layout{grid-template-columns:1fr}.anchor-list{display:none}.cmp-b.split{grid-template-columns:1fr}}
+</style>
+</head>
+<body data-page="components">
+
+<header data-shell="nav"></header>
+
+<main>
+  <section class="section tight" style="padding-top:34px">
+    <div class="wrap">
+      <div class="sec-head">
+        <div>
+          <div class="eyebrow" style="margin-bottom:12px"><span class="dot"></span>可复用组件与模板</div>
+          <h2 class="h">一套组件，任何实验室都能套用</h2>
+        </div>
+        <div class="hint">替换 assets/js/data.js 即可生成新实验室的仿真页</div>
+      </div>
+
+      <div class="hi info" style="margin-bottom:22px">
+        <span class="ic">◈</span>
+        <div><b>复用方式：</b>本项目的页面结构、样式与交互全部由 <code class="mono">data.js</code> 驱动。把 <code class="mono">LAB.lab</code>（实验室信息）、<code class="mono">LAB.devices</code>（设备台账）、<code class="mono">LAB.categories</code>（分类）替换成本实验室数据，页面即自动生成对应的卡片、台账与检索——无需改动 HTML。</div>
+      </div>
+
+      <div class="layout">
+        <aside class="anchor-list">
+          <div class="label">组件目录</div>
+          <a href="#c1">01 设备卡片</a>
+          <a href="#c2">02 检索与筛选</a>
+          <a href="#c3">03 台账表格</a>
+          <a href="#c4">04 步骤流程</a>
+          <a href="#c5">05 动画演示</a>
+          <a href="#c6">06 数据模板</a>
+        </aside>
+
+        <div>
+          <!-- 01 设备卡片 -->
+          <section class="cmp" id="c1">
+            <div class="cmp-h"><span class="no">01</span><h3>设备卡片</h3>
+              <button class="btn btn-ghost btn-sm copy" data-copy="code1">复制 HTML</button></div>
+            <div class="cmp-b split">
+              <div>
+                <div class="label">效果预览</div>
+                <div class="dev" style="max-width:280px">
+                  <div class="dev-fig" id="demoCard"><span class="zoom">🔍 放大</span></div>
+                  <div class="dev-body">
+                    <h4>工程绘图仪</h4>
+                    <div class="model">HP DesignJet T650（914mm/A0）</div>
+                    <p>输出 A0—A4 工程图纸，训练打印样式表、线宽与虚拟打印流程。</p>
+                    <div class="tagrow" style="display:flex;gap:6px;flex-wrap:wrap;margin-top:2px">
+                      <span class="tag v">工程输出设备</span><span class="tag d">SB-10</span>
+                    </div>
+                    <div class="dev-foot">
+                      <span class="qty">1 <small>台</small></span>
+                      <button class="btn btn-ghost btn-sm">详情 →</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div>
+                <div class="label">结构（数据驱动）</div>
+<pre class="code" id="code1">&lt;article class="dev"&gt;
+  &lt;div class="dev-fig"&gt;{设备 SVG 图标}
+    &lt;span class="zoom"&gt;🔍 放大&lt;/span&gt;&lt;/div&gt;
+  &lt;div class="dev-body"&gt;
+    &lt;h4&gt;{name}&lt;/h4&gt;
+    &lt;div class="model"&gt;{model}&lt;/div&gt;
+    &lt;p&gt;{summary}&lt;/p&gt;
+    &lt;span class="tag v"&gt;{分类}&lt;/span&gt;
+    &lt;div class="dev-foot"&gt;
+      &lt;span class="qty"&gt;{qty} &lt;small&gt;{unit}&lt;/small&gt;&lt;/span&gt;
+      &lt;button class="btn btn-ghost btn-sm"&gt;详情 →&lt;/button&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+&lt;/article&gt;</pre>
+              </div>
+            </div>
+          </section>
+
+          <!-- 02 检索与筛选 -->
+          <section class="cmp" id="c2">
+            <div class="cmp-h"><span class="no">02</span><h3>检索栏与分类筛选</h3>
+              <button class="btn btn-ghost btn-sm copy" data-copy="code2">复制 HTML</button></div>
+            <div class="cmp-b split">
+              <div>
+                <div class="label">效果预览</div>
+                <div class="search" style="margin-bottom:12px">
+                  <span class="s-ico">🔍</span>
+                  <input class="input" placeholder="搜索设备名称、型号、编号…" readonly>
+                </div>
+                <div class="chips" id="demoChips"></div>
+                <div class="hi info" style="margin-top:12px;font-size:12px">
+                  <span class="ic">◈</span><div>支持名称、型号、编号、参数与用途的<b>全文检索</b>，输入即筛，无需回车。</div>
+                </div>
+              </div>
+              <div>
+                <div class="label">结构</div>
+<pre class="code" id="code2">&lt;div class="chips"&gt;
+  &lt;button class="chip on" data-cat="all"&gt;全部 · 20&lt;/button&gt;
+  &lt;button class="chip" data-cat="compute"&gt;计算与显示设备 · 3&lt;/button&gt;
+  &lt;!-- 由 LAB.categories 循环生成 --&gt;
+&lt;/div&gt;
+
+&lt;input class="input" id="q" placeholder="搜索…"&gt;
+
+&lt;script&gt;
+q.addEventListener('input', filter);   // 输入即筛选
+chips.addEventListener('click', filter); // 分类切换
+&lt;/script&gt;</pre>
+              </div>
+            </div>
+          </section>
+
+          <!-- 03 台账表格 -->
+          <section class="cmp" id="c3">
+            <div class="cmp-h"><span class="no">03</span><h3>台账表格</h3>
+              <button class="btn btn-ghost btn-sm copy" data-copy="code3">复制 HTML</button></div>
+            <div class="cmp-b">
+              <div class="tbl-wrap">
+                <table class="tbl">
+                  <thead><tr><th style="width:50px">序号</th><th style="width:80px">编号</th><th>设备名称</th><th>型号规格</th><th style="width:80px">数量</th><th style="width:110px">分类</th></tr></thead>
+                  <tbody id="demoTbody"></tbody>
+                </table>
+              </div>
+              <p style="font-size:12px;color:var(--dim);margin-top:10px">表格与卡片共用同一份数据源，评审时可切换「台账视角」核对设备名称、型号、数量是否与真实台账一致。</p>
+            </div>
+          </section>
+
+          <!-- 04 步骤流程 -->
+          <section class="cmp" id="c4">
+            <div class="cmp-h"><span class="no">04</span><h3>步骤流程时间轴</h3>
+              <button class="btn btn-ghost btn-sm copy" data-copy="code4">复制 HTML</button></div>
+            <div class="cmp-b split">
+              <div>
+                <div class="label">效果预览</div>
+                <div class="steps" id="demoSteps"></div>
+              </div>
+              <div>
+                <div class="label">结构</div>
+<pre class="code" id="code4">&lt;div class="steps"&gt;
+  &lt;div class="step done"&gt;
+    &lt;div class="n"&gt;01&lt;/div&gt;
+    &lt;div class="c"&gt;&lt;h4&gt;签到与对号入座&lt;/h4&gt;
+      &lt;p&gt;…步骤说明…&lt;/p&gt;&lt;/div&gt;
+  &lt;/div&gt;
+  &lt;!-- .on 高亮当前步骤 / .done 已完成 --&gt;
+&lt;/div&gt;</pre>
+              </div>
+            </div>
+          </section>
+
+          <!-- 05 动画演示 -->
+          <section class="cmp" id="c5">
+            <div class="cmp-h"><span class="no">05</span><h3>设备动画演示</h3>
+              <button class="btn btn-ghost btn-sm copy" data-copy="code5">复制 HTML</button></div>
+            <div class="cmp-b split">
+              <div>
+                <div class="label">效果预览（绘图仪出图）</div>
+                <div id="demoAnim"></div>
+              </div>
+              <div>
+                <div class="label">用法</div>
+<pre class="code" id="code5">&lt;!-- 载入 assets/js/anim.js --&gt;
+&lt;div id="demo"&gt;&lt;/div&gt;
+
+&lt;script&gt;
+demo.innerHTML = getDemo('plotter');
+// 可用：projector / rack / plotter / ups / ac
+//       pc / screen / printer / floor
+&lt;/script&gt;</pre>
+                <div class="hi ok" style="margin-top:12px;font-size:12px">
+                  <span class="ic">★</span><div>全部动画为 <b>纯 CSS + SVG</b>，无需视频文件、可离线播放，接入其他设备只需新增一个 keyframes。</div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- 06 数据模板 -->
+          <section class="cmp" id="c6">
+            <div class="cmp-h"><span class="no">06</span><h3>数据模板（data.js）</h3>
+              <button class="btn btn-ghost btn-sm copy" data-copy="code6">复制模板</button></div>
+            <div class="cmp-b">
+<pre class="code" id="code6">window.LAB = {
+  lab: {
+    name: '××实验室', room: 'B-201', school: '××学院',
+    intro: '实验室简介…',
+    function: [{ k: '教学功能', v: '…' }],
+    openTime: '周一至周五 08:00—21:00',
+    contact: { teacher: '负责人', phone: '…', mail: '…', office: '…' }
+  },
+  categories: [{ id: 'compute', name: '计算设备', icon: '▣' }],
+  devices: [{
+    no: 'SB-01', name: '设备名称', model: '型号规格',
+    qty: 40, unit: '台', cat: 'compute', glyph: 'workstation',
+    scene3d: 'desks', anim: 'pc',
+    summary: '一句话功能定位',
+    spec: [{ k: '参数名', v: '参数值' }],
+    purpose: '用途…', principle: '原理…',
+    ops: ['操作规程 1'], safety: ['安全注意 1']
+  }],
+  safety: { groups: [...] },
+  procedure: { steps: [...] },
+  experiment: { name: '…', params: {...} }
+};</pre>
+              <div class="hi warn" style="margin-top:12px">
+                <span class="ic">!</span><div>替换数据后，请同步调整 <code class="mono">assets/js/scene3d.js</code> 中 <code class="mono">hotspotDefs</code> 的三维坐标（或删除对应热点），保证「台账设备 ↔ 三维热点」一一对应。</div>
+              </div>
+            </div>
+          </section>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer data-shell="footer"></footer>
+
+<script src="assets/js/data.js"></script>
+<script src="assets/js/glyphs.js"></script>
+<script src="assets/js/ui.js"></script>
+<script src="assets/js/anim.js"></script>
+<script>
+(function () {
+  var L = window.LAB, UI = window.UI;
+  UI.init('components');
+
+  /* 01 图标 */
+  document.getElementById('demoCard').insertAdjacentHTML('afterbegin', window.getGlyph('plotter'));
+
+  /* 02 分类 chips */
+  var counts = {};
+  L.devices.forEach(function (x) { counts[x.cat] = (counts[x.cat] || 0) + 1; });
+  document.getElementById('demoChips').innerHTML =
+    '<button class="chip on">全部 · ' + L.devices.length + '</button>' +
+    L.categories.slice(0, 3).map(function (c) {
+      return '<button class="chip">' + c.icon + ' ' + c.name + ' · ' + counts[c.id] + '</button>';
+    }).join('') + '<button class="chip">…</button>';
+
+  /* 03 表格 */
+  document.getElementById('demoTbody').innerHTML = L.devices.slice(0, 4).map(function (d, i) {
+    return '<tr><td class="num">' + (i + 1) + '</td>' +
+      '<td class="mono" style="color:var(--cyan)">' + d.no + '</td>' +
+      '<td><b>' + UI.esc(d.name) + '</b></td>' +
+      '<td class="mono" style="font-size:12px">' + UI.esc(d.model) + '</td>' +
+      '<td>' + d.qty + ' ' + d.unit + '</td>' +
+      '<td>' + UI.esc(UI.catName(d.cat)) + '</td></tr>';
+  }).join('') + '<tr><td colspan="6" style="text-align:center;color:var(--dim);padding:12px">… 共 ' + L.devices.length + ' 类设备</td></tr>';
+
+  /* 04 步骤 */
+  document.getElementById('demoSteps').innerHTML = L.procedure.steps.slice(0, 4).map(function (s, i) {
+    return '<div class="step ' + (i === 0 ? 'done' : i === 1 ? 'on' : '') + '">' +
+      '<div class="n">' + s.n + '</div><div class="c"><h4>' + s.t + '</h4><p>' + s.d + '</p></div></div>';
+  }).join('');
+
+  /* 05 动画 */
+  document.getElementById('demoAnim').innerHTML = window.getDemo('plotter');
+
+  /* 复制 */
+  document.addEventListener('click', function (e) {
+    var b = e.target.closest('[data-copy]');
+    if (!b) return;
+    var el = document.getElementById(b.dataset.copy);
+    var text = el.textContent;
+    function done() {
+      var old = b.textContent;
+      b.textContent = '✓ 已复制';
+      setTimeout(function () { b.textContent = old; }, 1400);
+    }
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(done).catch(function () { fallback(); });
+    } else fallback();
+    function fallback() {
+      var ta = document.createElement('textarea');
+      ta.value = text; document.body.appendChild(ta); ta.select();
+      try { document.execCommand('copy'); done(); } catch (err) {}
+      document.body.removeChild(ta);
+    }
+  });
+})();
+</script>
+</body>
+</html>

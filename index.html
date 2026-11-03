@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#060d18">
+<title>计算机辅助设计实验室（A-305）· CAD 机房虚拟仿真系统</title>
+<meta name="description" content="计算机辅助设计实验室虚拟仿真系统：三维机房漫游、设备台账检索、安全规范、操作规程与 AutoCAD 实训项目，覆盖 20 类设备。">
+<link rel="stylesheet" href="assets/css/theme.css">
+</head>
+<body data-page="index">
+
+<header data-shell="nav"></header>
+
+<main>
+  <!-- ============================ HERO ============================ -->
+  <section class="section" style="padding-top:44px">
+    <div class="wrap">
+      <div class="hero-grid">
+        <div class="reveal">
+          <div class="eyebrow"><span class="dot"></span>虚拟仿真实验室 · 在线开放</div>
+          <h1 class="title" style="margin-top:18px">
+            计算机辅助设计<br><span class="grad">实验室虚拟仿真系统</span>
+          </h1>
+          <p class="lead" style="margin-top:16px;max-width:560px">
+            把一间真实的 CAD 机房装进浏览器：40 个工位的低多边形三维场景、20 类设备档案、
+            上机安全规范与标准作业流程，以及可动手绘图的 AutoCAD 实训项目——看得见、点得开、练得成。
+          </p>
+          <div class="row hero-actions" style="margin-top:26px">
+            <a class="btn btn-primary" href="lab3d.html">▶ 进入三维机房漫游</a>
+            <a class="btn btn-ghost" href="devices.html">设备台账检索</a>
+            <a class="btn btn-ghost" href="experiment.html">AutoCAD 实训</a>
+          </div>
+          <div class="stats" style="margin-top:30px" id="heroStats"></div>
+        </div>
+
+        <div class="reveal" style="position:relative">
+          <div class="card" style="padding:18px">
+            <div class="card-h" style="margin-bottom:12px">
+              <span class="ico">◈</span>
+              <h3>机房平面布置图</h3>
+              <span class="hint">A-305 · 118㎡</span>
+            </div>
+            <div id="floorplan" style="border:1px solid var(--line);border-radius:12px;overflow:hidden;background:rgba(6,13,24,.6)"></div>
+            <div class="row between" style="margin-top:12px;font-size:11.5px;color:var(--dim)">
+              <span>◼ 40 工位 · 5 列 × 8 排</span>
+              <a href="lab3d.html" style="color:var(--cyan)">在三维中漫游 →</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================ 实验室简介 ============================ -->
+  <section class="section tight">
+    <div class="wrap">
+      <div class="sec-head reveal">
+        <div>
+          <div class="eyebrow" style="margin-bottom:12px"><span class="dot g"></span>实验室简介与功能定位</div>
+          <h2 class="h">一间实验室，四个身份</h2>
+        </div>
+        <div class="hint">房号 A-305 · 智能制造学院 · 建成于 2021 年</div>
+      </div>
+
+      <div class="grid g2" style="align-items:stretch">
+        <div class="card reveal">
+          <div class="card-h"><span class="ico">▤</span><h3>实验室简介</h3><span class="hint">118㎡ · 40 工位</span></div>
+          <p style="font-size:13.5px;color:var(--sub);line-height:2" id="labIntro"></p>
+          <div class="rule"></div>
+          <dl class="kv">
+            <dt>实验室名称</dt><dd>计算机辅助设计实验室</dd>
+            <dt>房间号</dt><dd>A-305（实训楼 A 座 3 层）</dd>
+            <dt>所属单位</dt><dd>智能制造学院 · 实验实训中心</dd>
+            <dt>面积 / 工位</dt><dd>118 ㎡ / 40 个学生工位 + 1 个教师工位</dd>
+            <dt>实验室编号</dt><dd class="mono">CAD-LAB-A305</dd>
+          </dl>
+        </div>
+
+        <div class="card reveal" id="functionCard">
+          <div class="card-h"><span class="ico p">◈</span><h3>功能定位</h3><span class="hint">教学 · 实训 · 竞赛 · 开放</span></div>
+          <div id="functionList" style="display:flex;flex-direction:column;gap:13px"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================ 设备分类覆盖 ============================ -->
+  <section class="section tight">
+    <div class="wrap">
+      <div class="sec-head reveal">
+        <div>
+          <div class="eyebrow" style="margin-bottom:12px"><span class="dot"></span>设备台账与覆盖</div>
+          <h2 class="h">20 类设备，100% 建模覆盖</h2>
+        </div>
+        <div class="hint">台账数据可一键替换为本实验室真实清单</div>
+      </div>
+
+      <div class="card reveal" style="padding:20px">
+        <div class="row between" style="margin-bottom:16px">
+          <div style="font-size:13px;color:var(--sub)">设备覆盖率（已建模 / 台账设备）</div>
+          <div class="mono" style="color:var(--green);font-weight:800;font-size:20px"><span data-count="100">0</span>%</div>
+        </div>
+        <div class="bar" style="height:9px"><i data-w="100" style="width:100%"></i></div>
+        <div class="grid g3" id="catGrid" style="margin-top:20px"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================ 环境亮点 ============================ -->
+  <section class="section tight">
+    <div class="wrap">
+      <div class="grid g2" style="align-items:stretch">
+        <div class="card reveal">
+          <div class="card-h"><span class="ico a">✦</span><h3>环境与技术亮点</h3></div>
+          <ul class="dots" id="highlights"></ul>
+        </div>
+        <div class="card reveal">
+          <div class="card-h"><span class="ico g">◷</span><h3>开放信息与联系方式</h3></div>
+          <dl class="kv" id="contactList"></dl>
+          <div class="hi ok" style="margin-top:16px">
+            <span class="ic">◎</span>
+            <div>本实验室面向全院学生开放，<b>开放时段内凭学生证登记即可上机</b>；课程占用时段请以教务课表为准。</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================ 模块入口 ============================ -->
+  <section class="section">
+    <div class="wrap">
+      <div class="sec-head reveal">
+        <div>
+          <div class="eyebrow" style="margin-bottom:12px"><span class="dot g"></span>系统功能</div>
+          <h2 class="h">六个模块，走完一次完整的 CAD 上机课</h2>
+        </div>
+      </div>
+      <div class="grid g3" id="moduleGrid"></div>
+    </div>
+  </section>
+</main>
+
+<footer data-shell="footer"></footer>
+
+<script src="assets/js/data.js"></script>
+<script src="assets/js/glyphs.js"></script>
+<script src="assets/js/ui.js"></script>
+<script src="assets/js/floorplan.js"></script>
+<script>
+(function () {
+  var L = window.LAB, UI = window.UI;
+  UI.init('index');
+
+  /* 关键数据 */
+  var st = UI.stats();
+  document.getElementById('heroStats').innerHTML =
+    '<div class="stat reveal"><div class="v"><span data-count="' + st.devices + '">0</span><small> 类</small></div><div class="k">设备台账</div></div>' +
+    '<div class="stat reveal"><div class="v"><span data-count="40">0</span><small> 台</small></div><div class="k">学生图形工作站</div></div>' +
+    '<div class="stat reveal"><div class="v"><span data-count="' + st.coverage + '">0</span><small> %</small></div><div class="k">设备覆盖率</div></div>' +
+    '<div class="stat reveal"><div class="v"><span data-count="' + (L.experiment.hours.match(/(\d+)\s*学时/) || [0, 2])[1] + '">0</span><small> 学时</small></div><div class="k">实训项目</div></div>';
+
+  /* 简介 */
+  document.getElementById('labIntro').textContent = L.lab.intro;
+
+  /* 功能定位 */
+  document.getElementById('functionList').innerHTML = L.lab.function.map(function (f) {
+    return '<div style="display:grid;grid-template-columns:64px 1fr;gap:12px;align-items:start">' +
+      '<span class="tag" style="justify-content:center">' + UI.esc(f.k) + '</span>' +
+      '<span style="font-size:13px;color:var(--sub);line-height:1.9">' + UI.esc(f.v) + '</span></div>';
+  }).join('');
+
+  /* 分类覆盖 */
+  var counts = {};
+  L.devices.forEach(function (x) { counts[x.cat] = (counts[x.cat] || 0) + 1; });
+  document.getElementById('catGrid').innerHTML = L.categories.map(function (c) {
+    var n = counts[c.id] || 0;
+    var pct = Math.round(n / L.devices.length * 100);
+    return '<div class="dev" style="padding:14px 15px;cursor:pointer" onclick="location.href=\'devices.html?cat=' + c.id + '\'">' +
+      '<div class="row between" style="margin-bottom:10px">' +
+        '<div style="display:flex;align-items:center;gap:9px">' +
+          '<span style="width:26px;height:26px;border-radius:8px;display:grid;place-items:center;background:rgba(34,211,238,.12);color:var(--cyan);font-size:13px">' + c.icon + '</span>' +
+          '<b style="font-size:13px">' + UI.esc(c.name) + '</b>' +
+        '</div>' +
+        '<span class="mono" style="color:var(--amber);font-size:13px">' + n + '</span>' +
+      '</div>' +
+      '<div class="bar thin"><i style="width:' + Math.max(8, pct) + '%"></i></div>' +
+      '<div style="margin-top:7px;font-size:11px;color:var(--dim)">' + pct + '% 的台账设备</div>' +
+    '</div>';
+  }).join('');
+
+  /* 亮点 */
+  document.getElementById('highlights').innerHTML = L.lab.highlights.map(function (h) {
+    return '<li>' + UI.esc(h) + '</li>';
+  }).join('');
+
+  /* 开放信息 */
+  var c = L.lab.contact;
+  document.getElementById('contactList').innerHTML =
+    '<dt>开放时间</dt><dd>' + UI.esc(L.lab.openTime) + '</dd>' +
+    '<dt>预约方式</dt><dd>' + UI.esc(L.lab.reserve) + '</dd>' +
+    '<dt>负责人</dt><dd>' + UI.esc(c.teacher) + '</dd>' +
+    '<dt>联系电话</dt><dd class="mono">' + UI.esc(c.phone) + '</dd>' +
+    '<dt>邮箱</dt><dd class="mono">' + UI.esc(c.mail) + '</dd>' +
+    '<dt>办公地点</dt><dd>' + UI.esc(c.office) + '</dd>';
+
+  /* 模块入口 */
+  var mods = [
+    { i: '◈', t: '三维机房漫游', d: '低多边形机房、15 个设备热点、自动巡检与第一人称漫游。', h: 'lab3d.html', tag: '三维模型 +3' },
+    { i: '▤', t: '设备台账', d: '20 类设备档案：型号、数量、参数、用途、原理与操作规程。', h: 'devices.html', tag: '覆盖率 100%' },
+    { i: '⚖', t: '安全规范', d: '用电、消防、防静电、网络与应急处理五大类规范。', h: 'safety.html', tag: '安全规范' },
+    { i: '✓', t: '操作规程', d: '从签到到关机的 10 步标准作业流程，带检查点自检。', h: 'procedure.html', tag: '流程模拟' },
+    { i: '✎', t: '实训项目', d: '「圆弧支架零件平面图绘制」：参数化目标 + 内置绘图板 + 自动评分。', h: 'experiment.html', tag: '实训 +10' },
+    { i: '◫', t: '组件库', d: '可复用的设备卡片、检索栏、台账表格与工艺流程组件。', h: 'components.html', tag: '可复用模板' }
+  ];
+  document.getElementById('moduleGrid').innerHTML = mods.map(function (m) {
+    return '<a class="card hoverable reveal" href="' + m.h + '" style="text-decoration:none;display:block">' +
+      '<div class="row between" style="margin-bottom:12px">' +
+        '<span style="width:38px;height:38px;border-radius:11px;display:grid;place-items:center;background:rgba(34,211,238,.12);color:var(--cyan);font-size:17px">' + m.i + '</span>' +
+        '<span class="tag d">' + m.tag + '</span>' +
+      '</div>' +
+      '<h3 class="h3" style="margin-bottom:7px">' + m.t + '</h3>' +
+      '<p style="font-size:12.5px;color:var(--sub);line-height:1.85">' + m.d + '</p>' +
+      '<div style="margin-top:14px;color:var(--cyan);font-size:12.5px">进入 →</div>' +
+    '</a>';
+  }).join('');
+
+  /* 平面图 */
+  if (window.drawFloorplan) window.drawFloorplan(document.getElementById('floorplan'));
+
+  UI.reveal();
+  UI.countUp();
+})();
+</script>
+</body>
+</html>

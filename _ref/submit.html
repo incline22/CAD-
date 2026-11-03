@@ -1,0 +1,712 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>作品提交 · “坐在AI上”·智能实验操作虚拟仿真创新大赛</title>
+<style>
+:root{
+  --bg:#05080f; --panel:rgba(14,23,40,.78); --panel2:rgba(20,32,54,.6);
+  --line:rgba(90,200,255,.16); --line2:rgba(90,200,255,.35);
+  --txt:#e8f2ff; --sub:#8ba0bf; --dim:#5f7599;
+  --cyan:#22d3ee; --blue:#3b82f6; --purple:#8b5cf6; --green:#34d399;
+  --amber:#fbbf24; --red:#f87171;
+  --mono:'SFMono-Regular',Consolas,'Liberation Mono',Menlo,monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+  background:var(--bg);color:var(--txt);min-height:100vh;overflow-x:hidden;-webkit-font-smoothing:antialiased}
+body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:radial-gradient(900px 520px at 12% -8%,rgba(34,211,238,.20),transparent 62%),
+             radial-gradient(800px 500px at 92% 4%,rgba(139,92,246,.18),transparent 60%),
+             radial-gradient(700px 600px at 50% 108%,rgba(59,130,246,.14),transparent 62%)}
+body::after{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.5;
+  background-image:linear-gradient(rgba(90,200,255,.055) 1px,transparent 1px),
+                   linear-gradient(90deg,rgba(90,200,255,.055) 1px,transparent 1px);
+  background-size:44px 44px;
+  mask-image:radial-gradient(circle at 50% 25%,#000 0%,transparent 78%);
+  -webkit-mask-image:radial-gradient(circle at 50% 25%,#000 0%,transparent 78%)}
+.wrap{position:relative;z-index:1;max-width:1180px;margin:0 auto;padding:32px 20px 64px}
+.top{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:26px}
+.brand{display:flex;align-items:center;gap:14px}
+.logo{width:46px;height:46px;border-radius:13px;flex:0 0 auto;background:linear-gradient(135deg,var(--cyan),var(--purple));
+  display:flex;align-items:center;justify-content:center;font-weight:800;font-size:19px;color:#04121c;
+  box-shadow:0 8px 26px rgba(34,211,238,.35)}
+.brand h1{font-size:17px;font-weight:700;letter-spacing:.3px;line-height:1.35}
+.brand p{font-size:12px;color:var(--sub);margin-top:3px;letter-spacing:.5px}
+.topnav{display:flex;gap:10px;flex-wrap:wrap}
+.topnav a,.topnav button{color:var(--sub);text-decoration:none;font-size:13px;padding:8px 14px;border:1px solid var(--line);
+  border-radius:10px;transition:.2s;background:rgba(12,20,36,.5);cursor:pointer;font-family:inherit}
+.topnav a:hover,.topnav button:hover{color:var(--cyan);border-color:var(--line2);background:rgba(34,211,238,.08)}
+.hero{text-align:center;margin:6px 0 26px}
+.hero .badge{display:inline-flex;align-items:center;gap:8px;font-size:12px;letter-spacing:1px;color:var(--cyan);
+  border:1px solid rgba(34,211,238,.3);background:rgba(34,211,238,.07);padding:6px 14px;border-radius:99px;margin-bottom:16px}
+.hero .dot{width:6px;height:6px;border-radius:50%;background:var(--cyan);box-shadow:0 0 10px var(--cyan);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+.hero h2{font-size:30px;font-weight:800;letter-spacing:.5px;
+  background:linear-gradient(100deg,#fff 10%,var(--cyan) 45%,var(--purple) 88%);
+  -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.hero p{color:var(--sub);font-size:14px;margin-top:12px;line-height:1.8}
+
+.card{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:26px;
+  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  box-shadow:0 20px 60px rgba(0,0,0,.45)}
+.card + .card{margin-top:20px}
+.card-h{display:flex;align-items:center;gap:11px;margin-bottom:20px;padding-bottom:15px;border-bottom:1px solid var(--line)}
+.card-h .ico{width:30px;height:30px;border-radius:9px;background:rgba(34,211,238,.13);color:var(--cyan);
+  display:flex;align-items:center;justify-content:center;font-size:15px;flex:0 0 auto}
+.card-h h3{font-size:15px;font-weight:700;letter-spacing:.3px}
+.card-h .hint{margin-left:auto;font-size:12px;color:var(--sub)}
+
+.grid2{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
+.field label{display:block;font-size:12.5px;color:var(--sub);margin-bottom:8px;letter-spacing:.4px}
+.field input{width:100%;padding:12px 14px;border-radius:11px;font-size:14px;color:var(--txt);
+  background:rgba(6,12,24,.75);border:1px solid var(--line);outline:none;transition:.2s;font-family:inherit}
+.field input:focus{border-color:var(--cyan);box-shadow:0 0 0 3px rgba(34,211,238,.12)}
+.field input::placeholder{color:#4a5b76}
+.field input.locked{background:rgba(8,16,30,.5);color:#a8bdd8;border-color:rgba(90,200,255,.1);cursor:not-allowed}
+.field .tip{font-size:11.5px;color:var(--dim);margin-top:6px}
+.code-input{font-family:var(--mono)!important;letter-spacing:3px;text-transform:uppercase;text-align:center;font-size:16px!important}
+
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:9px;padding:14px 30px;border-radius:12px;
+  font-size:14.5px;font-weight:700;letter-spacing:.5px;cursor:pointer;border:none;font-family:inherit;transition:.22s}
+.btn-main{width:100%;margin-top:22px;color:#04121c;background:linear-gradient(100deg,var(--cyan),var(--blue) 55%,var(--purple));
+  box-shadow:0 12px 34px rgba(34,211,238,.28)}
+.btn-main:hover{transform:translateY(-2px);box-shadow:0 16px 42px rgba(34,211,238,.4)}
+.btn-main:disabled{opacity:.5;cursor:not-allowed;transform:none;box-shadow:none}
+.btn-ghost{padding:9px 18px;font-size:13px;color:var(--txt);background:rgba(255,255,255,.05);border:1px solid var(--line);
+  border-radius:10px;cursor:pointer;font-family:inherit;transition:.2s}
+.btn-ghost:hover{border-color:var(--line2);color:var(--cyan)}
+.btn-sm{padding:7px 14px;font-size:12.5px;border-radius:9px;cursor:pointer;font-family:inherit;
+  background:rgba(255,255,255,.05);border:1px solid var(--line);color:var(--sub);transition:.2s}
+.btn-sm:hover{color:var(--cyan);border-color:var(--line2)}
+.btn-sm.danger:hover{color:var(--red);border-color:rgba(248,113,113,.45);background:rgba(248,113,113,.08)}
+
+.alert{border-radius:12px;padding:14px 17px;font-size:13.5px;line-height:1.75;margin-bottom:18px;display:none}
+.alert.show{display:block;animation:fadeIn .25s}
+.alert.err{background:rgba(248,113,113,.1);border:1px solid rgba(248,113,113,.32);color:#fca5a5}
+.alert.ok{background:rgba(52,211,153,.1);border:1px solid rgba(52,211,153,.32);color:#6ee7b7}
+.alert.warn{background:rgba(251,191,36,.1);border:1px solid rgba(251,191,36,.32);color:#fcd34d}
+.alert.info{background:rgba(34,211,238,.09);border:1px solid rgba(34,211,238,.3);color:#7dd3fc}
+@keyframes fadeIn{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}
+
+/* 状态徽标 */
+.badge-st{display:inline-flex;align-items:center;gap:7px;font-size:12.5px;padding:5px 13px;border-radius:99px;font-weight:600}
+.badge-st.p0{background:rgba(251,191,36,.14);color:var(--amber);border:1px solid rgba(251,191,36,.35)}
+.badge-st.p1{background:rgba(52,211,153,.14);color:var(--green);border:1px solid rgba(52,211,153,.35)}
+.badge-st.p2{background:rgba(248,113,113,.14);color:var(--red);border:1px solid rgba(248,113,113,.35)}
+
+/* 信息卡 */
+.profile{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px}
+.pf{border:1px solid var(--line);border-radius:12px;padding:13px 15px;background:rgba(6,12,24,.5)}
+.pf .k{font-size:11.5px;color:var(--sub);letter-spacing:.6px;margin-bottom:7px;display:flex;align-items:center;gap:6px}
+.pf .k .lock{font-size:10px;color:var(--dim)}
+.pf .v{font-size:14.5px;font-weight:600;word-break:break-all;line-height:1.5}
+.pf.code .v{font-family:var(--mono);color:var(--cyan);letter-spacing:2px;font-size:16px}
+.pf .v.masked{color:#a8bdd8;letter-spacing:1.5px;font-family:var(--mono);font-weight:500}
+
+/* 隐私提示 / 本人查看 */
+.pv{margin-top:16px;border:1px solid var(--line);border-radius:12px;padding:14px 16px;background:rgba(6,12,24,.5);
+  display:flex;align-items:flex-start;gap:14px;flex-wrap:wrap}
+.pv .pv-t{flex:1;min-width:220px;font-size:12.5px;color:var(--sub);line-height:1.75}
+.pv .pv-t b{color:var(--txt)}
+.pv .pv-t span{display:block;margin-top:4px;color:var(--dim)}
+.pv-ok{border-color:rgba(52,211,153,.3);background:rgba(52,211,153,.06)}
+.pv-ok .pv-t b{color:var(--green)}
+.pv-form{width:100%;margin-top:12px;padding-top:12px;border-top:1px dashed rgba(90,200,255,.2);display:none}
+.pv-form.show{display:block;animation:fadeIn .22s}
+.rv-form{display:flex;gap:9px;align-items:center;flex-wrap:wrap}
+.rv-form input{flex:1;min-width:150px;max-width:230px;padding:10px 14px;border-radius:10px;font-size:14px;
+  color:var(--txt);background:rgba(6,12,24,.85);border:1px solid var(--line);outline:none;font-family:var(--mono);
+  letter-spacing:2px;text-align:center;text-transform:uppercase}
+.rv-form input:focus{border-color:var(--cyan);box-shadow:0 0 0 3px rgba(34,211,238,.12)}
+.rv-err{margin-top:9px;font-size:12.5px;color:#fca5a5;display:none}
+.rv-err.show{display:block}
+.btn-sm.primary{color:#04121c;background:linear-gradient(100deg,var(--cyan),var(--blue));border:none;font-weight:700}
+.btn-sm.primary:hover{color:#04121c;opacity:.9;border:none}
+.btn-sm.primary:disabled{opacity:.5;cursor:not-allowed}
+
+/* 实验室作品卡 */
+.labwork{border:1px solid var(--line);border-radius:15px;padding:20px;background:rgba(9,16,30,.55);margin-bottom:16px}
+.labwork:last-child{margin-bottom:0}
+.lw-h{display:flex;align-items:flex-start;gap:12px;flex-wrap:wrap;margin-bottom:15px}
+.lw-h .t{flex:1;min-width:200px}
+.lw-h .t h4{font-size:15px;font-weight:700;line-height:1.5}
+.lw-h .t .m{font-size:12px;color:var(--sub);margin-top:6px;display:flex;gap:12px;flex-wrap:wrap}
+.lw-h .t .m em{font-style:normal}
+.lw-h .t .m .path{font-family:var(--mono);color:var(--dim);font-size:11px}
+
+.drop{border:1.5px dashed rgba(90,200,255,.32);border-radius:13px;padding:24px 18px;text-align:center;cursor:pointer;
+  transition:.2s;background:rgba(6,12,24,.4)}
+.drop:hover,.drop.over{border-color:var(--cyan);background:rgba(34,211,238,.07)}
+.drop .ic{font-size:26px;margin-bottom:9px;opacity:.85}
+.drop .t1{font-size:13.5px;color:var(--txt)}
+.drop .t2{font-size:11.5px;color:var(--dim);margin-top:7px;line-height:1.7}
+.drop input[type=file]{display:none}
+
+.upbar{margin-top:12px;display:none}
+.upbar.show{display:block}
+.upbar .bar{height:6px;border-radius:99px;background:rgba(90,200,255,.14);overflow:hidden;margin-bottom:8px}
+.upbar .bar i{display:block;height:100%;width:0;border-radius:99px;background:linear-gradient(90deg,var(--cyan),var(--purple));transition:width .2s}
+.upbar .txt{font-size:12px;color:var(--sub);display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
+
+.pending{margin-top:12px;display:flex;flex-wrap:wrap;gap:9px}
+.pending .pch{display:inline-flex;align-items:center;gap:8px;font-size:12.5px;padding:7px 12px;border-radius:9px;
+  background:rgba(34,211,238,.09);border:1px solid rgba(34,211,238,.25);color:#a5e8f5;max-width:100%}
+.pending .pch b{font-weight:500;word-break:break-all}
+
+.flist{margin-top:15px;border-top:1px solid var(--line);padding-top:13px}
+.flist .ft{font-size:12px;color:var(--sub);margin-bottom:10px;letter-spacing:.5px}
+.frow{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:10px;background:rgba(6,12,24,.5);
+  border:1px solid rgba(90,200,255,.09);margin-bottom:8px}
+.frow:last-child{margin-bottom:0}
+.frow .fi{width:30px;height:30px;border-radius:8px;background:rgba(34,211,238,.12);color:var(--cyan);
+  display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex:0 0 auto;
+  text-transform:uppercase;font-family:var(--mono)}
+.frow .fn{flex:1;min-width:0}
+.frow .fn .n{font-size:13px;word-break:break-all;line-height:1.5}
+.frow .fn .s{font-size:11px;color:var(--dim);margin-top:4px}
+.frow .fa{display:flex;gap:7px;flex:0 0 auto}
+.nofl{font-size:12.5px;color:var(--dim);text-align:center;padding:14px 0}
+
+.empty{padding:44px 20px;text-align:center;color:var(--sub);font-size:13.5px;line-height:1.9}
+.toast{position:fixed;left:50%;bottom:38px;transform:translateX(-50%) translateY(20px);z-index:99;opacity:0;
+  padding:12px 24px;border-radius:11px;font-size:13.5px;pointer-events:none;transition:.3s;max-width:88vw;text-align:center;
+  background:rgba(14,23,40,.96);border:1px solid var(--line2);color:var(--txt);box-shadow:0 14px 40px rgba(0,0,0,.55)}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.foot{text-align:center;color:#46587a;font-size:12px;margin-top:34px;line-height:2}
+.foot .support{color:#5f7599;letter-spacing:.5px}
+.foot .support b{color:#8ba0bf;font-weight:600;letter-spacing:1px}
+.hide{display:none!important}
+@media(max-width:760px){
+  .wrap{padding:20px 14px 48px}
+  .grid2{grid-template-columns:1fr}
+  .hero h2{font-size:22px}
+  .card{padding:20px 16px;border-radius:15px}
+  .labwork{padding:16px}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <div class="brand">
+      <div class="logo">AI</div>
+      <div>
+        <h1 id="siteName">“坐在AI上”·智能实验操作虚拟仿真创新大赛</h1>
+        <p>作品提交系统 · WORK SUBMISSION</p>
+      </div>
+    </div>
+    <nav class="topnav">
+      <a href="index.html">← 返回主页</a>
+      <a href="reg.html">← 返回报名</a>
+      <button id="btnLogout" class="hide">退出登录</button>
+    </nav>
+  </div>
+
+  <!-- ============ 登录区 ============ -->
+  <div id="loginArea">
+    <div class="hero">
+      <div class="badge"><span class="dot"></span>作品提交通道</div>
+      <h2>作品提交登录</h2>
+      <p>请使用报名时填写的 <b style="color:#22d3ee">工号</b> 与系统生成的 <b style="color:#22d3ee">作品提交码</b> 登录。<br>
+         报名信息经管理员审核通过后即可上传作品；已上传的作品可以删除后重新提交。</p>
+    </div>
+
+    <div class="card" style="max-width:640px;margin:0 auto">
+      <div class="card-h">
+        <div class="ico">🔑</div>
+        <h3>身份验证</h3>
+        <span class="hint">提交码区分大小写，可忽略横杠</span>
+      </div>
+      <div class="grid2">
+        <div class="field">
+          <label>工号</label>
+          <input type="text" id="inEmpNo" maxlength="30" placeholder="请输入工号" autocomplete="off">
+        </div>
+        <div class="field">
+          <label>作品提交码</label>
+          <input type="text" id="inCode" class="code-input" maxlength="20" placeholder="XXXXXXXXXX" autocomplete="off">
+          <div class="tip">报名成功时系统生成，请查看报名成功弹窗或截图</div>
+        </div>
+      </div>
+      <div class="alert err" id="loginErr"></div>
+      <button class="btn btn-main" id="btnLogin">登 录</button>
+    </div>
+  </div>
+
+  <!-- ============ 主面板 ============ -->
+  <div id="panelArea" class="hide">
+    <div class="hero">
+      <div class="badge"><span class="dot"></span>作品提交</div>
+      <h2>我的作品</h2>
+      <p>以下报名信息由系统锁定，不可修改；为保护个人信息，姓名 / 工号 / 联系方式<strong style="color:#22d3ee">默认打码</strong>，<br>
+         仅报名本人可通过「作品提交码」查看完整信息。如信息有误请联系大赛管理员。</p>
+    </div>
+
+    <div id="statusAlert" class="alert"></div>
+
+    <div class="card">
+      <div class="card-h">
+        <div class="ico">👤</div>
+        <h3>报名信息</h3>
+        <span class="hint">🔒 已锁定 · 默认打码</span>
+      </div>
+      <div class="profile" id="profileBox"></div>
+      <div class="pv" id="privacyBar"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-h">
+        <div class="ico">📦</div>
+        <h3>作品上传</h3>
+        <span class="hint" id="uploadHint"></span>
+      </div>
+      <div id="labWorkBox"></div>
+    </div>
+  </div>
+
+  <div class="foot">
+    <div id="footOrg">教学资源中心</div>
+    <div class="support">技术支持　<b>郑强</b></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+(function(){
+  var META = {max_upload_size: 200*1024*1024, max_upload_text:'200 MB', allowed_ext: [], max_files_per_lab: 20, work_title_required:false};
+  var DETAIL = null;
+
+  var $ = function(id){ return document.getElementById(id); };
+  function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g,function(c){
+    return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
+  function toast(msg){ var t=$('toast'); t.textContent=msg; t.classList.add('show');
+    clearTimeout(t._tm); t._tm=setTimeout(function(){ t.classList.remove('show'); },2600); }
+
+  function api(action, data){
+    var opt = {credentials:'same-origin', headers:{}};
+    if (data){
+      opt.method = 'POST';
+      if (data instanceof FormData){ opt.body = data; }
+      else { opt.headers['Content-Type']='application/json'; opt.body = JSON.stringify(data); }
+    }
+    return fetch('api.php?action='+encodeURIComponent(action), opt).then(function(r){ return r.json(); });
+  }
+
+  /* ---------------- 初始化 ---------------- */
+  fetch('api.php?action=meta').then(function(r){return r.json();}).then(function(res){
+    if (res.code===0){
+      META = res.data;
+      $('siteName').textContent = res.data.site_name;
+      $('footOrg').textContent = res.data.site_org;
+    }
+  }).catch(function(){});
+
+  // URL 里带 code 时自动填入，随后立刻把提交码从地址栏与浏览历史里抹掉
+  (function(){
+    var m = location.search.match(/[?&]code=([^&]+)/);
+    if (!m) return;
+    $('inCode').value = decodeURIComponent(m[1]).toUpperCase();
+    var n = location.search.match(/[?&]emp_no=([^&]+)/);
+    if (n) $('inEmpNo').value = decodeURIComponent(n[1]);
+    if (history && history.replaceState) {
+      history.replaceState(null, document.title, location.pathname);
+    }
+  })();
+
+  /* ---------------- 登录 ---------------- */
+  $('btnLogin').addEventListener('click', doLogin);
+  $('inCode').addEventListener('keydown', function(e){ if (e.key==='Enter') doLogin(); });
+  $('inEmpNo').addEventListener('keydown', function(e){ if (e.key==='Enter') doLogin(); });
+
+  function doLogin(){
+    var empNo = $('inEmpNo').value.trim();
+    var code = $('inCode').value.trim();
+    var e = $('loginErr');
+    e.classList.remove('show');
+    if (!empNo) { e.textContent='请输入工号'; e.classList.add('show'); return; }
+    if (!code) { e.textContent='请输入作品提交码'; e.classList.add('show'); return; }
+
+    var b = $('btnLogin'); b.disabled=true; b.textContent='登录中…';
+    api('work_login', {emp_no:empNo, submit_code:code}).then(function(res){
+      if (res.code!==0){
+        e.textContent = res.msg || '登录失败';
+        e.classList.add('show');
+        return;
+      }
+      showPanel(res.data);
+    }).catch(function(){
+      e.textContent = '网络异常，请稍后重试'; e.classList.add('show');
+    }).then(function(){
+      b.disabled=false; b.textContent='登 录';
+    });
+  }
+
+  $('btnLogout').addEventListener('click', function(){
+    api('work_logout', {t:1}).then(function(){
+      DETAIL = null;
+      REVEAL = null;
+      $('panelArea').classList.add('hide');
+      $('loginArea').classList.remove('hide');
+      $('btnLogout').classList.add('hide');
+      $('inCode').value = '';
+      toast('已退出登录');
+    });
+  });
+
+  /* ---------------- 渲染主面板 ---------------- */
+  function showPanel(d){
+    DETAIL = d;
+    $('loginArea').classList.add('hide');
+    $('panelArea').classList.remove('hide');
+    $('btnLogout').classList.remove('hide');
+    window.scrollTo({top:0, behavior:'smooth'});
+
+    // 状态提示
+    var a = $('statusAlert');
+    a.className = 'alert show ' + (d.status===1 ? 'ok' : (d.status===2 ? 'err' : 'warn'));
+    a.innerHTML = '<b>审核状态：' + esc(d.status_text) + '</b><br>' + esc(d.tip);
+
+    // 信息卡（全部只读锁定；个人信息默认打码）
+    renderProfile(d);
+    renderPrivacy(d);
+
+    $('uploadHint').textContent = d.pass
+      ? ('单文件不超过 ' + (d.max_size_text||META.max_upload_text) + '，每间实验室最多 ' + d.max_files_per_lab + ' 个文件')
+      : '当前状态暂不能上传作品';
+
+    renderLabs();
+  }
+
+  /* ---------------- 个人信息：打码显示 + 本人查看 ---------------- */
+  var REVEAL = null;   // 验证通过后的完整信息，仅本次页面停留期间保留
+
+  function renderProfile(d){
+    var r = REVEAL || {};
+    $('profileBox').innerHTML =
+      pf('姓名','name', r.name || d.name, !r.name && d.masked) +
+      pf('工号','emp_no', r.emp_no || d.emp_no, !r.emp_no && d.masked) +
+      pf('所在单位','company', r.company || d.company) +
+      pf('联系方式','contact', r.contact || d.contact, !r.contact && d.masked) +
+      pf('报名时间','create_time', d.create_time) +
+      pfc('作品提交码', d.submit_code_fmt || d.submit_code);
+  }
+
+  function renderPrivacy(d){
+    var box = $('privacyBar');
+    if (!showPrivacyBar(d)){ box.innerHTML = ''; return; }
+
+    if (REVEAL){
+      box.className = 'pv pv-ok';
+      box.innerHTML =
+        '<div class="pv-t">✅ <b>已显示完整信息</b>'
+        + '<span>仅本次页面停留期间可见，刷新页面、退出登录或切换到别的浏览器后会重新打码。</span></div>'
+        + '<button class="btn-sm" id="btnRemask">恢复打码</button>';
+      $('btnRemask').addEventListener('click', function(){
+        REVEAL = null; renderProfile(DETAIL); renderPrivacy(DETAIL); toast('已恢复打码显示');
+      });
+      return;
+    }
+
+    box.className = 'pv';
+    box.innerHTML =
+      '<div class="pv-t">🔒 <b>个人信息已打码</b>'
+      + '<span>姓名、工号、联系方式默认隐藏部分字符，防止他人从屏幕或截图中获取。'
+      + '仅报名本人可凭「作品提交码」查看完整信息。</span></div>'
+      + '<button class="btn-sm primary" id="btnReveal">查看完整信息</button>'
+      + '<div class="pv-form" id="rvBox">'
+      +   '<div class="rv-form">'
+      +     '<input type="text" id="rvCode" maxlength="20" placeholder="输入作品提交码" autocomplete="off">'
+      +     '<button class="btn-sm primary" id="btnRvOk">确 认</button>'
+      +     '<button class="btn-sm" id="btnRvCancel">取 消</button>'
+      +   '</div>'
+      +   '<div class="rv-err" id="rvErr"></div>'
+      + '</div>';
+
+    $('btnReveal').addEventListener('click', function(){
+      $('btnReveal').style.display = 'none';
+      $('rvBox').classList.add('show');
+      $('rvCode').focus();
+    });
+    $('btnRvCancel').addEventListener('click', function(){
+      $('rvBox').classList.remove('show');
+      $('rvCode').value = '';
+      $('rvErr').classList.remove('show');
+      $('btnReveal').style.display = '';
+    });
+    $('rvCode').addEventListener('keydown', function(e){ if (e.key === 'Enter') $('btnRvOk').click(); });
+    $('btnRvOk').addEventListener('click', function(){
+      var code = $('rvCode').value.trim();
+      var err  = $('rvErr');
+      err.classList.remove('show');
+      if (!code){ err.textContent = '请输入作品提交码'; err.classList.add('show'); return; }
+      var b = $('btnRvOk');
+      b.disabled = true; b.textContent = '验证中…';
+      api('work_reveal', {submit_code: code}).then(function(res){
+        if (res.code !== 0){
+          err.textContent = res.msg || '验证失败';
+          err.classList.add('show');
+          return;
+        }
+        REVEAL = res.data || null;
+        renderProfile(DETAIL);
+        renderPrivacy(DETAIL);
+        toast('已显示完整信息');
+      }).catch(function(){
+        err.textContent = '网络异常，请稍后重试'; err.classList.add('show');
+      }).then(function(){
+        b.disabled = false; b.textContent = '确 认';
+      });
+    });
+  }
+
+  /** 是否需要展示隐私条：整条记录本来就打码，或本人已解锁时都要展示（便于恢复打码） */
+  function showPrivacyBar(d){
+    return !!(d && (d.masked || REVEAL));
+  }
+
+  function pf(label, key, val, masked){
+    return '<div class="pf"><div class="k">'+label+' <span class="lock">🔒</span></div>'
+      + '<div class="v'+(masked ? ' masked' : '')+'">'+esc(val||'-')+'</div></div>';
+  }
+  function pfc(label, val){
+    return '<div class="pf code"><div class="k">'+label+' <span class="lock">🔒</span></div>'
+      + '<div class="v" id="myCode">'+esc(val||'-')+'</div></div>';
+  }
+
+  function renderLabs(){
+    var d = DETAIL;
+    if (!d) return;
+    var box = $('labWorkBox');
+    if (!d.labs || !d.labs.length){ box.innerHTML = '<div class="empty">本次报名未包含任何实验室</div>'; return; }
+
+    var html = '';
+    d.labs.forEach(function(l, idx){
+      html += '<div class="labwork" data-lab="'+l.lab_id+'">'
+        + '<div class="lw-h"><div class="t">'
+        +   '<h4>'+esc(l.lab_name)+'</h4>'
+        +   '<div class="m">'
+        +     '<em>'+esc(l.building)+' '+esc(l.room)+'</em>'
+        +     '<em>'+esc(l.college)+'</em>'
+        +     '<em>编号 '+esc(l.lab_code)+'</em>'
+        +     '<em class="path">📁 '+esc(d.emp_no)+'/'+esc(l.dir_name)+'/</em>'
+        +   '</div>'
+        + '</div></div>';
+
+      if (d.pass){
+        html += '<div class="drop" data-lab="'+l.lab_id+'">'
+          +   '<div class="ic">⬆</div>'
+          +   '<div class="t1">点击选择文件，或将文件拖拽到此处</div>'
+          +   '<div class="t2">支持多选 · 单文件 ≤ '+(d.max_size_text||META.max_upload_text)
+          +     ' · 剩余可上传 <b>'+(d.max_files_per_lab - l.file_count)+'</b> 个</div>'
+          +   '<input type="file" multiple data-lab="'+l.lab_id+'">'
+          + '</div>';
+        if (d.work_title_required){
+          html += '<div class="field" style="margin-top:12px"><label>作品名称（必填）</label>'
+            + '<input type="text" class="wt" data-lab="'+l.lab_id+'" maxlength="100" placeholder="请输入作品名称"></div>';
+        }
+        html += '<div class="pending" data-lab="'+l.lab_id+'"></div>'
+          + '<div class="upbar" data-lab="'+l.lab_id+'"><div class="bar"><i></i></div>'
+          + '<div class="txt"><span class="st">准备上传…</span><span class="pc">0%</span></div></div>'
+          + '<div style="margin-top:12px;display:flex;gap:10px;flex-wrap:wrap">'
+          +   '<button class="btn btn-ghost do-upload" data-lab="'+l.lab_id+'">立即上传</button>'
+          +   '<button class="btn btn-ghost do-clear" data-lab="'+l.lab_id+'">清空待上传</button>'
+          + '</div>';
+      } else {
+        html += '<div class="alert info show" style="margin:4px 0 0">'
+          + (d.status===2 ? '报名审核不通过，无法提交作品。' : '报名正在审核中，审核通过后即可在此上传作品。')
+          + '</div>';
+      }
+
+      // 已上传文件
+      html += '<div class="flist"><div class="ft">已上传文件（'+l.file_count+' / '+d.max_files_per_lab+'）</div>';
+      if (l.files && l.files.length){
+        l.files.forEach(function(f){
+          html += '<div class="frow">'
+            + '<div class="fi">'+esc((f.ext||'file').slice(0,4))+'</div>'
+            + '<div class="fn"><div class="n">'+esc(f.orig_name)+'</div>'
+            + '<div class="s">'+esc(f.work_title||'')+(f.work_title?' · ':'')+f.size_text+' · '+esc(f.create_time)+'</div></div>'
+            + '<div class="fa">'
+            +   '<a class="btn-sm" style="text-decoration:none;display:inline-flex;align-items:center" href="api.php?action=work_download&file_id='+f.id+'">下载</a>'
+            +   (d.pass ? '<button class="btn-sm danger do-del" data-id="'+f.id+'">删除</button>' : '')
+            + '</div></div>';
+        });
+      } else {
+        html += '<div class="nofl">尚未上传任何文件</div>';
+      }
+      html += '</div></div>';
+    });
+
+    box.innerHTML = html;
+    bindLabEvents();
+  }
+
+  /* ---------------- 上传交互 ---------------- */
+  var staging = {};   // lab_id -> File[]
+
+  function bindLabEvents(){
+    // 点击 / 拖拽
+    Array.prototype.forEach.call(document.querySelectorAll('.drop'), function(drop){
+      var labId = drop.getAttribute('data-lab');
+      var input = drop.querySelector('input[type=file]');
+      drop.addEventListener('click', function(){ input.click(); });
+      input.addEventListener('change', function(){ addFiles(labId, input.files); input.value=''; });
+      ['dragenter','dragover'].forEach(function(ev){
+        drop.addEventListener(ev, function(e){ e.preventDefault(); drop.classList.add('over'); });
+      });
+      ['dragleave','drop'].forEach(function(ev){
+        drop.addEventListener(ev, function(e){ e.preventDefault(); drop.classList.remove('over'); });
+      });
+      drop.addEventListener('drop', function(e){
+        if (e.dataTransfer && e.dataTransfer.files) addFiles(labId, e.dataTransfer.files);
+      });
+    });
+
+    Array.prototype.forEach.call(document.querySelectorAll('.do-clear'), function(b){
+      b.addEventListener('click', function(){ var id=b.getAttribute('data-lab'); staging[id]=[]; renderPending(id); });
+    });
+    Array.prototype.forEach.call(document.querySelectorAll('.do-upload'), function(b){
+      b.addEventListener('click', function(){ var id=b.getAttribute('data-lab'); doUpload(id, b); });
+    });
+    Array.prototype.forEach.call(document.querySelectorAll('.do-del'), function(b){
+      b.addEventListener('click', function(){
+        var id = b.getAttribute('data-id');
+        if (!confirm('确认删除该文件？删除后可以重新上传。')) return;
+        b.disabled = true; b.textContent = '删除中';
+        api('work_delete', {file_id:id}).then(function(res){
+          if (res.code!==0){ toast(res.msg||'删除失败'); b.disabled=false; b.textContent='删除'; return; }
+          toast('已删除，可重新上传');
+          refresh();
+        }).catch(function(){ toast('网络异常'); b.disabled=false; b.textContent='删除'; });
+      });
+    });
+  }
+
+  function addFiles(labId, files){
+    var lab = findLab(labId);
+    if (!lab) return;
+    var list = staging[labId] || [];
+    var allow = META.allowed_ext || [];
+    var remain = DETAIL.max_files_per_lab - lab.file_count - list.length;
+
+    Array.prototype.forEach.call(files, function(f){
+      if (list.length >= DETAIL.max_files_per_lab - lab.file_count){
+        toast('该实验室最多上传 ' + DETAIL.max_files_per_lab + ' 个文件'); return;
+      }
+      if (f.size > (DETAIL.max_size || META.max_upload_size)){
+        toast(f.name + ' 超过大小上限 ' + (DETAIL.max_size_text||META.max_upload_text)); return;
+      }
+      var ext = (f.name.split('.').pop() || '').toLowerCase();
+      if (allow.length && allow.indexOf(ext) === -1){
+        toast(f.name + ' 的类型 .' + ext + ' 不被允许'); return;
+      }
+      for (var i=0;i<list.length;i++){ if (list[i].name===f.name && list[i].size===f.size) { toast('已存在同名文件：'+f.name); return; } }
+      list.push(f);
+    });
+    staging[labId] = list;
+    renderPending(labId);
+  }
+
+  function renderPending(labId){
+    var box = document.querySelector('.pending[data-lab="'+labId+'"]');
+    if (!box) return;
+    var list = staging[labId] || [];
+    box.innerHTML = list.map(function(f, i){
+      return '<span class="pch">📄 <b>'+esc(f.name)+'</b> <span style="color:#5f7599">'+humanSize(f.size)+'</span>'
+        + ' <span style="cursor:pointer;color:#f87171" data-rm="'+i+'" data-lab="'+labId+'">✕</span></span>';
+    }).join('');
+    Array.prototype.forEach.call(box.querySelectorAll('[data-rm]'), function(x){
+      x.addEventListener('click', function(){
+        var id = x.getAttribute('data-lab'), i = parseInt(x.getAttribute('data-rm'),10);
+        staging[id].splice(i,1); renderPending(id);
+      });
+    });
+  }
+
+  function doUpload(labId, btn){
+    var list = staging[labId] || [];
+    if (!list.length){ toast('请先选择要上传的文件'); return; }
+    var fd = new FormData();
+    fd.append('lab_id', labId);
+    var wt = document.querySelector('.wt[data-lab="'+labId+'"]');
+    if (wt) fd.append('work_title', wt.value.trim());
+    list.forEach(function(f){ fd.append('file[]', f, f.name); });
+
+    var bar = document.querySelector('.upbar[data-lab="'+labId+'"]');
+    if (bar) bar.classList.add('show');
+    btn.disabled = true;
+
+    var xhr = new XMLHttpRequest();
+    xhr.open('POST', 'api.php?action=work_upload', true);
+    xhr.withCredentials = true;
+
+    xhr.upload.onprogress = function(e){
+      if (!e.lengthComputable || !bar) return;
+      var p = Math.round(e.loaded / e.total * 100);
+      bar.querySelector('.bar i').style.width = p + '%';
+      bar.querySelector('.pc').textContent = p + '%';
+      bar.querySelector('.st').textContent = '正在上传 ' + humanSize(e.loaded) + ' / ' + humanSize(e.total);
+    };
+    xhr.onload = function(){
+      btn.disabled = false;
+      var res = null;
+      try { res = JSON.parse(xhr.responseText); } catch(e){}
+      if (bar){ bar.querySelector('.bar i').style.width='100%'; bar.querySelector('.pc').textContent='100%'; }
+      if (!res || res.code !== 0){
+        toast((res && res.msg) ? res.msg : '上传失败（HTTP ' + xhr.status + '）');
+        setTimeout(function(){ if(bar) bar.classList.remove('show'); }, 1600);
+        return;
+      }
+      var d = res.data || {};
+      if (d.errors && d.errors.length) toast('部分文件未上传：' + d.errors.join('；'));
+      else toast('上传成功，共 ' + (d.saved||[]).length + ' 个文件');
+      staging[labId] = [];
+      refresh();
+    };
+    xhr.onerror = function(){
+      btn.disabled = false;
+      toast('网络异常，上传中断');
+      if (bar) bar.classList.remove('show');
+    };
+    xhr.send(fd);
+  }
+
+  function findLab(id){ var r=null; (DETAIL.labs||[]).forEach(function(l){ if (String(l.lab_id)===String(id)) r=l; }); return r; }
+  function humanSize(b){
+    if (b < 1024) return b + ' B';
+    if (b < 1048576) return (b/1024).toFixed(1) + ' KB';
+    if (b < 1073741824) return (b/1048576).toFixed(2) + ' MB';
+    return (b/1073741824).toFixed(2) + ' GB';
+  }
+
+  function refresh(){
+    api('work_detail').then(function(res){
+      if (res.code !== 0){ toast(res.msg||'会话已失效'); return; }
+      DETAIL = res.data;
+      showPanel(res.data);
+    }).catch(function(){});
+  }
+
+  /* 复制提交码 */
+  document.addEventListener('click', function(e){
+    if (e.target && e.target.id === 'myCode'){
+      var t = e.target.textContent.replace(/-/g,'');
+      var ta = document.createElement('textarea');
+      ta.value = t; ta.style.position='fixed'; ta.style.left='-9999px';
+      document.body.appendChild(ta); ta.select();
+      try { document.execCommand('copy'); toast('作品提交码已复制'); } catch(err){ toast('复制失败，请手动记录'); }
+      document.body.removeChild(ta);
+    }
+  });
+
+  // 进入页面即尝试恢复登录态
+  api('work_detail').then(function(res){
+    if (res.code === 0) showPanel(res.data);
+  }).catch(function(){});
+})();
+</script>
+</body>
+</html>

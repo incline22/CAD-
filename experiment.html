@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#060d18">
+<title>实训项目 · 圆弧支架零件平面图绘制</title>
+<meta name="description" content="AutoCAD 实训项目：参数化任务 + 内置迷你 CAD 绘图板 + 自动评分，完整呈现项目目标、原理、环境、步骤、成果与考核方式。">
+<link rel="stylesheet" href="assets/css/theme.css">
+<style>
+  .info-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px 18px;font-size:12.5px}
+  .info-grid dt{color:var(--dim);font-size:11.5px}
+  .info-grid dd{color:var(--txt);margin-bottom:4px}
+
+  .workspace{
+    display:grid;grid-template-columns:132px 1fr 330px;gap:12px;
+    border:1px solid var(--line);border-radius:var(--r-lg);overflow:hidden;
+    background:rgba(9,18,31,.72);height:min(72vh,660px);min-height:480px;
+  }
+  .toolcol{
+    display:flex;flex-direction:column;gap:5px;padding:10px 8px;border-right:1px solid var(--line);
+    background:rgba(7,15,26,.8);overflow-y:auto;
+  }
+  .toolcol .cap{font-size:10px;color:var(--dim);letter-spacing:1px;padding:4px 4px 2px}
+  .tool{
+    display:flex;align-items:center;gap:7px;padding:7px 9px;border-radius:9px;font-size:11.5px;
+    border:1px solid transparent;background:rgba(255,255,255,.03);color:var(--sub);transition:.16s;text-align:left;
+  }
+  .tool:hover{background:rgba(34,211,238,.1);color:var(--txt);border-color:var(--line)}
+  .tool.on{background:linear-gradient(100deg,rgba(34,211,238,.22),rgba(139,92,246,.2));color:#eaf8ff;border-color:var(--line-2);font-weight:700}
+  .tool kbd{
+    margin-left:auto;font-family:var(--mono);font-size:9.5px;color:var(--dim);
+    border:1px solid var(--line);border-radius:4px;padding:0 4px;
+  }
+  .tool.on kbd{color:#0b2a44;background:var(--cyan);border-color:transparent;font-weight:700}
+  .tool .i{width:15px;text-align:center;font-size:12px}
+
+  .canvaswrap{position:relative;min-width:0;background:#050e18;overflow:hidden}
+  #pad{position:absolute;inset:0}
+  .cmdbar{
+    position:absolute;left:0;right:0;bottom:0;display:flex;align-items:center;gap:8px;
+    padding:7px 10px;background:linear-gradient(180deg,transparent,rgba(4,11,19,.95) 40%);
+    font-family:var(--mono);font-size:11.5px;
+  }
+  .cmdbar .prompt{color:var(--cyan)}
+  .cmdbar input{
+    flex:1;min-width:0;background:rgba(6,15,26,.9);border:1px solid var(--line);border-radius:7px;
+    color:var(--txt);padding:5px 9px;font-family:var(--mono);font-size:11.5px;
+  }
+  .cmdbar input:focus{outline:none;border-color:var(--line-3)}
+  .hintbar{
+    position:absolute;left:10px;top:10px;display:flex;gap:6px;flex-wrap:wrap;pointer-events:none;
+  }
+  .hintbar span{
+    font-size:10.5px;padding:3px 9px;border-radius:99px;background:rgba(6,15,26,.85);
+    border:1px solid var(--line);color:var(--sub);font-family:var(--mono);
+  }
+  .hintbar span.on{color:var(--cyan);border-color:var(--line-2)}
+
+  .sidecol{padding:12px;overflow-y:auto;border-left:1px solid var(--line);background:rgba(8,16,28,.7)}
+  .sidecol h4{font-size:12.5px;letter-spacing:.4px;margin-bottom:9px;color:var(--txt)}
+  .param{display:flex;align-items:center;gap:8px;margin-bottom:7px;font-size:11.5px;color:var(--sub)}
+  .param label{width:76px;flex:0 0 auto}
+  .param input[type=range]{flex:1;accent-color:#22d3ee;height:3px}
+  .param .val{width:46px;text-align:right;font-family:var(--mono);color:var(--cyan);font-size:11px}
+  .dims{font-family:var(--mono);font-size:11px;color:var(--sub);line-height:2.1;
+    border:1px solid var(--line);border-radius:9px;padding:9px 11px;background:rgba(6,14,24,.7)}
+  .dims b{color:var(--amber);font-weight:700}
+
+  .result-part{margin-bottom:9px}
+  .result-part .t{display:flex;justify-content:space-between;font-size:11.5px;color:var(--sub);margin-bottom:3px}
+  .result-part .t span:last-child{font-family:var(--mono);color:var(--cyan)}
+  .result-part .n{font-size:10.5px;color:var(--dim);margin-top:3px;line-height:1.6}
+  .grade-big{
+    font-family:var(--mono);font-size:38px;font-weight:800;line-height:1;
+    background:linear-gradient(100deg,var(--cyan),var(--violet));-webkit-background-clip:text;background-clip:text;
+    -webkit-text-fill-color:transparent;
+  }
+  .steps-s{padding-left:0;list-style:none;counter-reset:s}
+  .steps-s li{
+    counter-increment:s;font-size:11.5px;color:var(--sub);line-height:1.9;padding-left:20px;position:relative;
+    margin-bottom:4px;
+  }
+  .steps-s li::before{
+    content:counter(s);position:absolute;left:0;top:1px;width:14px;height:14px;border-radius:50%;
+    background:rgba(34,211,238,.14);color:var(--cyan);font-size:9px;display:grid;place-items:center;
+    font-family:var(--mono);
+  }
+  @media(max-width:1080px){
+    .workspace{grid-template-columns:1fr;height:auto}
+    .toolcol{flex-direction:row;flex-wrap:wrap;border-right:none;border-bottom:1px solid var(--line)}
+    .toolcol .cap{display:none}
+    .canvaswrap{height:56vh;min-height:360px}
+    .sidecol{border-left:none;border-top:1px solid var(--line)}
+    .info-grid{grid-template-columns:repeat(2,1fr)}
+  }
+  @media(max-width:620px){
+    .canvaswrap{height:48vh}
+    .hintbar{display:none}
+    .info-grid{grid-template-columns:1fr}
+    .workspace{border-radius:14px}
+    .sidecol{padding:10px}
+  }
+</style>
+</head>
+<body data-page="experiment">
+
+<header data-shell="nav"></header>
+
+<main>
+  <section class="section tight" style="padding-top:34px">
+    <div class="wrap">
+      <div class="sec-head">
+        <div>
+          <div class="eyebrow" style="margin-bottom:12px"><span class="dot"></span>实训项目 · 实验流程仿真</div>
+          <h2 class="h" id="expName"></h2>
+        </div>
+        <div class="hint">项目编号 <span class="mono" id="expCode"></span></div>
+      </div>
+
+      <div class="card" style="padding:18px 20px;margin-bottom:18px">
+        <dl class="info-grid" id="expInfo"></dl>
+      </div>
+
+      <div class="grid g2" style="align-items:start;margin-bottom:18px">
+        <div class="card">
+          <div class="card-h"><span class="ico">◎</span><h3>项目目标</h3></div>
+          <ul class="dots" id="expGoal"></ul>
+          <div class="card-h" style="margin:16px 0 12px"><span class="ico p">◈</span><h3>原理与业务规则</h3></div>
+          <p style="font-size:13px;color:var(--sub);line-height:1.95" id="expPrinciple"></p>
+          <p style="font-size:12.5px;color:var(--dim);line-height:1.9;margin-top:8px" id="expRule"></p>
+        </div>
+        <div class="card">
+          <div class="card-h"><span class="ico g">⌘</span><h3>设备与软件环境</h3></div>
+          <ul class="dots" id="expEnv"></ul>
+          <div class="card-h" style="margin:16px 0 12px"><span class="ico a">✓</span><h3>操作步骤</h3></div>
+          <ol class="steps-s" id="expSteps"></ol>
+        </div>
+      </div>
+
+      <!-- ================= 实训工作区 ================= -->
+      <div class="sec-head" style="margin-top:30px">
+        <div>
+          <div class="eyebrow" style="margin-bottom:10px"><span class="dot g"></span>在线实训 · 内置绘图板</div>
+          <h2 class="h" style="font-size:19px">按任务尺寸绘制图形，提交后自动评分</h2>
+        </div>
+        <div class="hint">命令行：L 直线 · REC 矩形 · C 圆 · DIM 标注 · E 删除 · U 撤销</div>
+      </div>
+
+      <div class="workspace">
+        <div class="toolcol" id="tools"></div>
+        <div class="canvaswrap">
+          <div id="pad"></div>
+          <div class="hintbar">
+            <span id="hOrtho">正交 ON</span>
+            <span id="hSnap">捕捉 ON</span>
+            <span id="hGhost">参考图 ON</span>
+          </div>
+          <div class="cmdbar">
+            <span class="prompt">命令:</span>
+            <input id="cmd" placeholder="输入命令后回车，例如 REC" autocomplete="off" spellcheck="false">
+            <button class="btn btn-ghost btn-sm" id="btnSend" style="padding:5px 11px">执行</button>
+          </div>
+        </div>
+        <div class="sidecol">
+          <h4>任务参数（参数化练习）</h4>
+          <div id="params"></div>
+          <div class="dims" id="dimList" style="margin-top:10px"></div>
+          <div class="row" style="margin-top:12px;gap:6px">
+            <button class="btn btn-primary btn-sm" id="btnScore" style="flex:1">提交并评分</button>
+            <button class="btn btn-ghost btn-sm" id="btnUndo">撤销</button>
+            <button class="btn btn-ghost btn-sm" id="btnClear">清空</button>
+          </div>
+          <div id="scoreBox" style="margin-top:14px"></div>
+        </div>
+      </div>
+
+      <div class="grid g2" style="margin-top:18px;align-items:start">
+        <div class="card">
+          <div class="card-h"><span class="ico">▤</span><h3>成果要求</h3></div>
+          <ul class="dots" id="expResult"></ul>
+          <div class="hi info" style="margin-top:12px">
+            <span class="ic">◎</span>
+            <div>在线绘图板用于<b>课前预演与自评</b>；正式提交仍以 AutoCAD 生成的 DWG + PDF 为准，两者的评分标准一致。</div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-h"><span class="ico a">⚖</span><h3>考核方式（100 分）</h3><span class="hint">过程性评价 40% + 成果评价 60%</span></div>
+          <div class="tbl-wrap">
+            <table class="tbl">
+              <thead><tr><th>考核点</th><th>要求</th><th style="width:70px">分值</th></tr></thead>
+              <tbody id="expAssess"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer data-shell="footer"></footer>
+
+<script src="assets/js/data.js"></script>
+<script src="assets/js/glyphs.js"></script>
+<script src="assets/js/ui.js"></script>
+<script src="assets/js/cad.js"></script>
+<script>
+(function () {
+  var L = window.LAB, UI = window.UI;
+  UI.init('experiment');
+  var E = L.experiment;
+
+  document.getElementById('expName').textContent = '实训项目：' + E.name;
+  document.getElementById('expCode').textContent = E.code;
+
+  document.getElementById('expInfo').innerHTML =
+    '<div><dt>所属实验室</dt><dd>' + E.belong + '</dd></div>' +
+    '<div><dt>对应课程</dt><dd>' + E.course + '</dd></div>' +
+    '<div><dt>面向专业</dt><dd>' + E.major + '</dd></div>' +
+    '<div><dt>面向年级 / 学时</dt><dd>' + E.grade + ' · ' + E.hours + '</dd></div>';
+
+  document.getElementById('expGoal').innerHTML = E.goal.map(function (g) { return '<li>' + UI.esc(g) + '</li>'; }).join('');
+  document.getElementById('expPrinciple').textContent = E.principle;
+  document.getElementById('expRule').textContent = E.rule;
+  document.getElementById('expEnv').innerHTML = E.env.map(function (g) { return '<li>' + UI.esc(g) + '</li>'; }).join('');
+  document.getElementById('expSteps').innerHTML = E.steps.map(function (g) { return '<li>' + UI.esc(g) + '</li>'; }).join('');
+  document.getElementById('expResult').innerHTML = E.result.map(function (g) { return '<li>' + UI.esc(g) + '</li>'; }).join('');
+  document.getElementById('expAssess').innerHTML = E.assess.map(function (a) {
+    return '<tr><td><b>' + a.k + '</b></td><td>' + a.v + '</td><td class="num">' + a.p + '</td></tr>';
+  }).join('');
+
+  /* ---------------- 工具栏 ---------------- */
+  var TOOLS = [
+    { id: 'line', label: '直线', i: '╱', k: 'L' },
+    { id: 'rect', label: '矩形', i: '▭', k: 'REC' },
+    { id: 'circle', label: '圆', i: '◯', k: 'C' },
+    { id: 'dim', label: '尺寸标注', i: '↔', k: 'DIM' },
+    { id: 'erase', label: '删除', i: '✕', k: 'E' },
+    { id: 'pan', label: '平移视图', i: '✥', k: 'P' }
+  ];
+  var toolsEl = document.getElementById('tools');
+  toolsEl.innerHTML = '<div class="cap">绘图命令</div>' + TOOLS.map(function (t, i) {
+    return '<button class="tool' + (i === 0 ? ' on' : '') + '" data-tool="' + t.id + '">' +
+      '<span class="i">' + t.i + '</span>' + t.label + '<kbd>' + t.k + '</kbd></button>';
+  }).join('') +
+  '<div class="cap" style="margin-top:6px">编辑</div>' +
+  '<button class="tool" id="tUndo"><span class="i">↺</span>撤销<kbd>U</kbd></button>' +
+  '<button class="tool" id="tZoom"><span class="i">🔍</span>缩放复位<kbd>Z</kbd></button>' +
+  '<div class="cap" style="margin-top:6px">辅助</div>' +
+  '<button class="tool on" id="tOrtho"><span class="i">⊥</span>正交<kbd>F8</kbd></button>' +
+  '<button class="tool on" id="tSnap"><span class="i">◆</span>对象捕捉<kbd>F3</kbd></button>' +
+  '<button class="tool on" id="tGhost"><span class="i">◌</span>参考图<kbd>F7</kbd></button>';
+
+  /* ---------------- 绘图板 ---------------- */
+  var pad = new window.CADPad(document.getElementById('pad'), {
+    onChange: function () { autoCheck(); }
+  });
+  pad.setTarget({ W: E.params.W, H: E.params.H, d: E.params.d, D: E.params.D, dx: E.params.dx, dy: E.params.dy });
+
+  toolsEl.addEventListener('click', function (e) {
+    var b = e.target.closest('[data-tool]');
+    if (!b) return;
+    setTool(b.dataset.tool);
+  });
+  function setTool(id) {
+    pad.setTool(id);
+    Array.prototype.forEach.call(toolsEl.querySelectorAll('[data-tool]'), function (x) {
+      x.classList.toggle('on', x.dataset.tool === id);
+    });
+  }
+
+  document.getElementById('tUndo').addEventListener('click', function () { pad.undo(); autoCheck(); });
+  document.getElementById('tZoom').addEventListener('click', function () { pad.exec('Z'); });
+  document.getElementById('tOrtho').addEventListener('click', function () {
+    pad.ortho = !pad.ortho; this.classList.toggle('on', pad.ortho);
+    document.getElementById('hOrtho').textContent = '正交 ' + (pad.ortho ? 'ON' : 'OFF');
+    document.getElementById('hOrtho').classList.toggle('on', pad.ortho);
+  });
+  document.getElementById('tSnap').addEventListener('click', function () {
+    pad.snapOn = !pad.snapOn; this.classList.toggle('on', pad.snapOn);
+    document.getElementById('hSnap').textContent = '捕捉 ' + (pad.snapOn ? 'ON' : 'OFF');
+    document.getElementById('hSnap').classList.toggle('on', pad.snapOn);
+  });
+  document.getElementById('tGhost').addEventListener('click', function () {
+    pad.setGhost(!pad.ghostOn); this.classList.toggle('on', pad.ghostOn);
+    document.getElementById('hGhost').textContent = '参考图 ' + (pad.ghostOn ? 'ON' : 'OFF');
+    document.getElementById('hGhost').classList.toggle('on', pad.ghostOn);
+  });
+
+  /* 命令行 */
+  var cmdEl = document.getElementById('cmd');
+  function runCmd() {
+    var c = cmdEl.value.trim();
+    if (!c) return;
+    var r = pad.exec(c);
+    var map = { LINE: 'line', RECT: 'rect', RECTANG: 'rect', CIRCLE: 'circle', DIM: 'dim', DLI: 'dim', ERASE: 'erase', PAN: 'pan' };
+    var t = map[r];
+    if (t) setTool(t);
+    else if (r === 'U') autoCheck();
+    cmdEl.value = '';
+  }
+  document.getElementById('btnSend').addEventListener('click', runCmd);
+  cmdEl.addEventListener('keydown', function (e) { if (e.key === 'Enter') runCmd(); });
+  document.addEventListener('keydown', function (e) {
+    if (e.target.tagName === 'INPUT') return;
+    if (e.key === 'F8') { e.preventDefault(); document.getElementById('tOrtho').click(); }
+    if (e.key === 'F3') { e.preventDefault(); document.getElementById('tSnap').click(); }
+    if (e.key === 'F7') { e.preventDefault(); document.getElementById('tGhost').click(); }
+    if (e.key === 'Escape') pad.exec('ESC');
+    var k = e.key.toLowerCase();
+    if (k === 'l') setTool('line');
+    if (k === 'c') setTool('circle');
+    if (k === 'e') setTool('erase');
+    if (k === 'u') { pad.undo(); autoCheck(); }
+  });
+
+  /* ---------------- 参数面板 ---------------- */
+  var P = E.params;
+  var paramsEl = document.getElementById('params');
+  paramsEl.innerHTML = E.paramsMeta.map(function (m) {
+    return '<div class="param"><label>' + m.label + '</label>' +
+      '<input type="range" data-k="' + m.k + '" min="' + m.min + '" max="' + m.max + '" step="' + m.step + '" value="' + P[m.k] + '">' +
+      '<span class="val" data-v="' + m.k + '">' + P[m.k] + '</span></div>';
+  }).join('');
+
+  paramsEl.addEventListener('input', function (e) {
+    var r = e.target.closest('input[type=range]');
+    if (!r) return;
+    P[r.dataset.k] = parseFloat(r.value);
+    paramsEl.querySelector('[data-v="' + r.dataset.k + '"]').textContent = r.value;
+    pad.setTarget(P);
+    renderDims();
+  });
+
+  function renderDims() {
+    document.getElementById('dimList').innerHTML =
+      '底板 <b>' + P.W + ' × ' + P.H + '</b> mm<br>' +
+      '安装孔 <b>4 × Ø' + P.d + '</b>，边距 <b>' + P.dx + ' / ' + P.dy + '</b> mm<br>' +
+      '中心孔 <b>Ø' + P.D + '</b>，与外框同心<br>' +
+      '孔距 <b>' + (P.W - 2 * P.dx) + ' × ' + (P.H - 2 * P.dy) + '</b> mm';
+  }
+  renderDims();
+
+  /* ---------------- 评分 ---------------- */
+  document.getElementById('btnScore').addEventListener('click', function () {
+    var r = pad.score();
+    var parts = r.parts.map(function (p) {
+      var pct = Math.round(p.got / p.max * 100);
+      return '<div class="result-part">' +
+        '<div class="t"><span>' + p.name + '</span><span>' + p.got + ' / ' + p.max + '</span></div>' +
+        '<div class="bar thin"><i style="width:' + pct + '%"></i></div>' +
+        '<div class="n">' + p.note + '</div></div>';
+    }).join('');
+
+    document.getElementById('scoreBox').innerHTML =
+      '<div class="card flat" style="padding:14px">' +
+        '<div class="row between"><div><div class="grade-big">' + r.total + '</div>' +
+          '<div style="font-size:11px;color:var(--dim)">总分 / 100</div></div>' +
+          '<span class="tag ' + (r.total >= 75 ? 'g' : r.total >= 60 ? 'a' : 'd') + '">' + r.grade + '</span></div>' +
+        '<div class="rule" style="margin:12px 0"></div>' + parts + '</div>';
+
+    UI.open('实训评分报告', 
+      '<div class="row between" style="margin-bottom:14px">' +
+        '<div><div class="grade-big">' + r.total + '<small style="font-size:14px;-webkit-text-fill-color:var(--sub)"> / 100</small></div>' +
+        '<div style="font-size:12px;color:var(--dim);margin-top:4px">' + E.name + '</div></div>' +
+        '<span class="tag ' + (r.total >= 75 ? 'g' : r.total >= 60 ? 'a' : 'd') + '" style="font-size:13px;padding:6px 16px">' + r.grade + '</span>' +
+      '</div>' +
+      '<div class="tbl-wrap" style="margin-bottom:14px"><table class="tbl"><thead><tr><th>考核点</th><th style="width:90px">得分</th><th>说明</th></tr></thead><tbody>' +
+      r.parts.map(function (p) {
+        return '<tr><td><b>' + p.name + '</b></td><td class="num">' + p.got + ' / ' + p.max + '</td><td style="color:var(--sub)">' + p.note + '</td></tr>';
+      }).join('') +
+      '</tbody></table></div>' +
+      '<div class="hi ' + (r.total >= 75 ? 'ok' : r.total >= 60 ? 'warn' : 'bad') + '"><span class="ic">' +
+        (r.total >= 75 ? '★' : '!') + '</span><div>' +
+        (r.total >= 75 ? '尺寸关系正确、图元完整，符合国标制图表达要求。可以把这份图在 AutoCAD 里用 1:1 复现并出图。'
+          : '还差一些：请对照左上角参考图的紫色虚线，检查<b>外形尺寸、孔位边距与中心孔同心</b>，再用 DIM 补齐 3 处标注。') +
+      '</div></div>', { wide: true });
+  });
+
+  document.getElementById('btnUndo').addEventListener('click', function () { pad.undo(); autoCheck(); });
+  document.getElementById('btnClear').addEventListener('click', function () {
+    pad.clear();
+    document.getElementById('scoreBox').innerHTML = '';
+  });
+
+  /* 步骤联动（简单提示：检测到对应图元就标记） */
+  function autoCheck() {
+    var ents = pad.getEntities();
+    var hasRect = ents.some(function (e) { return e.type === 'rect'; });
+    var circles = ents.filter(function (e) { return e.type === 'circle'; }).length;
+    var dims = ents.filter(function (e) { return e.type === 'dim'; }).length;
+    var t = pad.t;
+    var okRect = false;
+    ents.forEach(function (e) {
+      if (e.type === 'rect' && Math.abs(Math.abs(e.b.x - e.a.x) - t.W) < 2 && Math.abs(Math.abs(e.b.y - e.a.y) - t.H) < 2) okRect = true;
+    });
+    document.getElementById('hOrtho').classList.toggle('on', pad.ortho);
+  }
+})();
+</script>
+</body>
+</html>
