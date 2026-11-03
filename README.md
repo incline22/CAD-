@@ -14,6 +14,7 @@
 
 > 如果学校要求用网址访问，把整个文件夹放到任意静态服务器（Nginx / Apache / IIS / GitHub Pages）根目录即可，`index.html` 就是入口。
 > 本地也可以在该目录执行 `python -m http.server 8080`，浏览器打开 `http://localhost:8080`。
+> **公网部署（Cloudflare Pages / Workers / GitHub Pages）遇到报错？看 [DEPLOY.md](DEPLOY.md)** —— 里面已经配好 `package.json` 与 `wrangler.jsonc`，零构建直传即可。
 
 **三维机房操作**：左键拖动环视 · 右键拖动平移 · 滚轮缩放 · 点击设备看档案 · 「漫游」模式用 `WASD` 走动 · 「巡检」模式自动巡场。
 
