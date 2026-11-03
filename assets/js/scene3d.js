@@ -302,7 +302,7 @@
     var cBase = cyl(0.26, 0.28, 0.05, 12, 0x303a44);
     cBase.position.y = 0.03;
     tChair.add(cSeat, cBack, cPole, cBase);
-    tChair.position.set(0, 0, -0.58);
+    tChair.position.set(0, 0, -0.52);
     podium.add(tChair);
 
     podium.position.set(0, 0, -ROOM.d / 2 + 0.85);
@@ -660,7 +660,7 @@
     /* -------------------------------------------------- 视角预设 */
     var presets = {
       overview: { pos: new T.Vector3(9.6, 6.6, 11.4), target: new T.Vector3(0, 1.0, 0.2), mode: 'orbit' },
-      podium: { pos: new T.Vector3(3.0, 2.55, -1.15), target: new T.Vector3(0, 0.9, -3.75), mode: 'orbit' },
+      podium: { pos: new T.Vector3(4.6, 2.95, -0.6), target: new T.Vector3(-0.4, 0.85, -3.7), mode: 'orbit' },
       teacher: { pos: new T.Vector3(0, 1.72, -4.02), target: new T.Vector3(0, 1.15, 3.6), mode: 'walk' },
       student: { pos: new T.Vector3(0, 1.55, 5.4), target: new T.Vector3(0, 1.35, -4.4), mode: 'walk' },
       devices: { pos: new T.Vector3(-4.0, 1.8, 1.4), target: new T.Vector3(-6.2, 1.1, 3.9), mode: 'orbit' },
